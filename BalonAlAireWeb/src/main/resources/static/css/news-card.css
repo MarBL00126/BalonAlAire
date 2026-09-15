@@ -1,0 +1,134 @@
+/* ============================================================
+   news-card.css — Mobile-first. Cards con aspect-ratio fijo,
+   hover lift, line-clamp, target táctil.
+   ============================================================ */
+
+/* ── Card base ── */
+.news-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  /* Garantiza que la card no se rompa con contenido largo */
+  min-width: 0;
+}
+
+.news-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+/* ── Link envolvente ── */
+.news-card > a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  /* Touch target: el link ocupa toda la card */
+}
+
+/* ── Imagen — aspect-ratio fijo para que nunca se deforme ── */
+.news-card__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+  /* Evitar que la imagen se encoja en flex */
+  flex-shrink: 0;
+}
+
+.news-card:hover .news-card__image {
+  transform: scale(1.03);
+}
+
+/* ── Placeholder si no hay imagen ── */
+.news-card__image-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: var(--surface-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+/* ── Cuerpo de la card ── */
+.news-card__body {
+  padding: 12px 14px 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0; /* evita overflow en flex/grid */
+}
+
+/* ── Badge categoría ── */
+.news-card__category {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--primary);
+}
+
+/* ── Título — line-clamp 3 líneas ── */
+.news-card__title {
+  font-family: var(--font-heading);
+  font-size: clamp(14px, 2vw, 16px);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--heading);
+  transition: color 0.2s ease;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.news-card > a:hover .news-card__title {
+  color: var(--primary);
+}
+
+/* ── Excerpt — line-clamp 2 líneas ── */
+.news-card__excerpt {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  flex: 1;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Metadata ── */
+.news-card__meta {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 4px;
+  /* Garantizar que no se corte el texto */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════
+   TABLET ≥768px: body más espacioso
+   ════════════════════════════════ */
+@media (min-width: 768px) {
+  .news-card__body {
+    padding: 14px 16px 16px;
+    gap: 6px;
+  }
+}

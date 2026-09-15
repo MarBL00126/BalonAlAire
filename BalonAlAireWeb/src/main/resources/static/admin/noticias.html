@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias — Balón Al Aire</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            <img src="/assets/images/logo.png" alt="Balón Al Aire">
+            <span>Panel de administración</span>
+        </div>
+
+        <a href="/" class="admin-back-link">← Volver al sitio</a>
+
+        <nav class="admin-nav">
+            <a href="/admin">Dashboard</a>
+            <a href="/admin/noticias" class="active">Noticias</a>
+            <a href="/admin/categorias">Categorías</a>
+            <a href="/admin/publicidad">Publicidad</a>
+            <a href="/admin/configuracion">Configuración</a>
+            <form action="/admin/logout" method="POST" class="admin-nav-logout">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </nav>
+
+    </aside>
+
+    <main class="admin-main">
+
+        <header class="admin-header">
+            <div>
+                <h1>Noticias</h1>
+                <p>Administración de las noticias del sitio.</p>
+            </div>
+
+            <button
+                id="new-post-button"
+                class="btn btn-primary">
+                Nueva noticia
+            </button>
+        </header>
+
+        <div id="posts-message"></div>
+
+        <section class="admin-card" id="post-form-container" hidden>
+
+            <h2 id="post-form-title">Nueva noticia</h2>
+
+            <form id="post-form" class="admin-form">
+
+                <input type="hidden" id="post-id">
+
+                <div class="form-group">
+                    <label for="post-title">Título</label>
+                    <input
+                        type="text"
+                        id="post-title"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="post-slug">Slug</label>
+                    <input
+                        type="text"
+                        id="post-slug"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="post-excerpt">Extracto</label>
+                    <textarea
+                        id="post-excerpt"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="post-content">Contenido</label>
+                    <textarea
+                        id="post-content"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="post-img-url">URL de imagen</label>
+                        <input
+                            type="text"
+                            id="post-img-url"
+                            placeholder="/uploads/ads/imagen.jpg o https://..."
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-author">Autor</label>
+                        <input
+                            type="text"
+                            id="post-author"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="post-image">Imagen desde dispositivo</label>
+                    <input
+                        type="file"
+                        id="post-image"
+                        accept="image/png,image/jpeg,image/webp"
+                    >
+                    <small>PNG, JPG o WebP. Si seleccionás un archivo, reemplaza la URL de imagen.</small>
+                    <div id="post-image-preview" class="image-preview"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Categorías</label>
+                    <div id="post-categories" class="admin-checkbox-group"></div>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="post-status">Estado</label>
+
+                        <select id="post-status" required>
+                            <option value="DRAFT">Borrador</option>
+                            <option value="PUBLISHED">Publicado</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-published-at">
+                            Fecha de publicación
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="post-published-at"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="admin-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+                        Guardar
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancel-post-button"
+                        class="btn btn-secondary">
+                        Cancelar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="admin-table-container">
+
+            <table class="admin-table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Categorías</th>
+                        <th>Autor</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="posts-table-body">
+                    <tr>
+                        <td colspan="7">
+                            Cargando noticias...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/js/admin/admin-api.js"></script>
+<script src="/js/admin/posts.js"></script>
+
+</body>
+</html>

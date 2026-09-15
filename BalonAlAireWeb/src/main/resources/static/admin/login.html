@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Balón Al Aire</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+
+<main class="login-page">
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="login-title">
+                <img src="/assets/images/logo.png" alt="Balón Al Aire" class="login-logo">
+                <p>Panel de administración</p>
+            </div>
+
+            <form class="login-form" method="POST" action="/admin/login">
+
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Ingresar
+                </button>
+
+            </form>
+
+            <div id="login-message"></div>
+
+            <p style="margin-top: 16px; text-align: center; font-size: 13px;">
+                ¿Primer acceso? <a href="/admin/register.html">Registrar nuevo usuario</a>
+            </p>
+
+            <p class="login-back-link">
+                <a href="/">← Volver a la página principal</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script src="/js/admin/login.js"></script>
+
+</body>
+</html>

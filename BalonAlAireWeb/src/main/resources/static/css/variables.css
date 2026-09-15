@@ -1,0 +1,45 @@
+/* ============================================================
+   variables.css — Design tokens de Balón al Aire
+   Extraídos del sitio original (balonalaire.site, mayo 2026)
+   ============================================================ */
+
+:root {
+  /* ── Colores de marca ── */
+  --primary:        #bb1919;   /* rojo: hover links, botones, categorías, acentos */
+  --primary-dark:   #961414;   /* rojo oscuro: hover de botones */
+  --secondary:      #222222;   /* nav, footer background */
+  --secondary-light:#2e2e2e;   /* nav hover bg */
+
+  /* ── Colores de texto ── */
+  --text:           #3a3a3a;   /* cuerpo de texto */
+  --text-muted:     #888888;   /* metadatos, fechas */
+  --text-light:     #aaaaaa;   /* placeholders, hints */
+  --heading:        #000000;   /* títulos */
+  --link:           #404040;
+  --link-hover:     #bb1919;
+
+  /* ── Fondos ── */
+  --background:     #d6874a;   /* fondo de página */
+   --background-alt:     #f7f7f7;   /* fondocito */
+  --surface:        #ffffff;   /* cards, widgets */
+  --surface-alt:    #f0f0f0;   /* ad slots vacíos */
+
+  /* ── Bordes y sombras ── */
+  --border:         #e5e5e5;
+  --border-dark:    #cccccc;
+  --shadow:         0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-hover:   0 4px 16px rgba(0, 0, 0, 0.13);
+
+  /* ── Radios ── */
+  --radius:         4px;
+  --radius-lg:      8px;
+
+  /* ── Tipografía ── */
+  --font-body:    'Lato', Arial, sans-serif;
+  --font-heading: 'Source Sans Pro', Arial, sans-serif;
+
+  /* ── Espaciados base ── */
+  --container-max:  1200px;
+  --gap:            24px;
+  --gap-sm:         12px;
+}

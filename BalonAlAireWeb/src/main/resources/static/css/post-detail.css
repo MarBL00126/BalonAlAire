@@ -1,0 +1,124 @@
+/* ============================================================
+   post-detail.css — Mobile-first. Artículo individual
+   responsive con clamp(), aspect-ratio en imagen.
+   ============================================================ */
+
+/* ── Wrapper del artículo ── */
+.post-detail {
+  min-width: 0; /* evita overflow en grid/flex */
+}
+
+/* ── Badge de categoría ── */
+.post-detail__category {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+}
+
+.post-detail__category a {
+  color: inherit;
+}
+
+.post-detail__category a:hover {
+  text-decoration: underline;
+}
+
+/* ── Título del artículo ── */
+.post-detail h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  line-height: 1.2;
+  margin-bottom: 10px;
+  color: var(--heading);
+}
+
+/* ── Metadata (autor · fecha) ── */
+.post-detail__meta {
+  font-family: var(--font-heading);
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+/* ── Imagen destacada: aspect-ratio fijo, nunca se deforma ── */
+.post-detail__image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* ── Cuerpo del artículo ── */
+.post-detail__content {
+  line-height: 1.75;
+  font-size: clamp(15px, 2vw, 17px);
+  color: var(--text);
+}
+
+.post-detail__content p {
+  margin-bottom: 1.1em;
+}
+
+.post-detail__content h2,
+.post-detail__content h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.post-detail__content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 12px 0;
+}
+
+.post-detail__content a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.post-detail__content blockquote {
+  border-left: 4px solid var(--primary);
+  padding-left: 16px;
+  margin: 20px 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── Título de sección "Noticias relacionadas" ── */
+.related-title {
+  font-family: var(--font-heading);
+  font-size: clamp(15px, 2.5vw, 18px);
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary);
+  color: var(--heading);
+}
+
+/* ── Grilla de noticias relacionadas ── */
+#relatedNews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: var(--gap);
+}
+
+/* ════════════════════════════════
+   TABLET ≥768px
+   ════════════════════════════════ */
+@media (min-width: 768px) {
+  .post-detail__image {
+    margin-bottom: 28px;
+  }
+
+  .post-detail__meta {
+    margin-bottom: 22px;
+  }
+}

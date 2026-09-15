@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Balón Al Aire</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            <img src="/assets/images/logo.png" alt="Balón Al Aire">
+            <span>Panel de administración</span>
+        </div>
+
+        <a href="/" class="admin-back-link">← Volver al sitio</a>
+
+        <nav class="admin-nav">
+            <a href="/admin" class="active">Dashboard</a>
+            <a href="/admin/noticias">Noticias</a>
+            <a href="/admin/categorias">Categorías</a>
+            <a href="/admin/publicidad">Publicidad</a>
+            <a href="/admin/configuracion">Configuración</a>
+            <form action="/admin/logout" method="POST" class="admin-nav-logout">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </nav>
+
+    </aside>
+
+    <main class="admin-main">
+
+        <header class="admin-header">
+            <div>
+                <h1>Panel de administración</h1>
+                <p>Panel de administración del sitio.</p>
+            </div>
+        </header>
+
+        <section class="dashboard-grid">
+
+            <a href="/admin/noticias" class="dashboard-card">
+                <h2>Noticias</h2>
+                <p>Crear, editar y eliminar noticias.</p>
+                <p class="dashboard-card-count"><span id="posts-count">–</span> noticias</p>
+            </a>
+
+            <a href="/admin/categorias" class="dashboard-card">
+                <h2>Categorías</h2>
+                <p>Administrar las categorías del sitio.</p>
+                <p class="dashboard-card-count"><span id="categories-count">–</span> categorías</p>
+            </a>
+
+            <a href="/admin/publicidad" class="dashboard-card">
+                <h2>Publicidad</h2>
+                <p>Administrar banners y anuncios.</p>
+                <p class="dashboard-card-count"><span id="ads-count">–</span> anuncios</p>
+            </a>
+
+            <a href="/admin/configuracion" class="dashboard-card">
+                <h2>Configuración</h2>
+                <p>Configurar redes sociales y opciones del sitio.</p>
+            </a>
+
+        </section>
+
+        <footer class="admin-footer">
+            Panel de administración
+        </footer>
+
+    </main>
+
+</div>
+
+<script src="/js/admin/admin-api.js"></script>
+<script src="/js/admin/dashboard.js"></script>
+
+</body>
+</html>

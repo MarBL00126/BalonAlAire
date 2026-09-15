@@ -1,0 +1,179 @@
+/* ============================================================
+   sidebar.css — Mobile-first. Sidebar debajo del contenido
+   en mobile (orden natural del DOM), widget compacto.
+   ============================================================ */
+
+/* ════════════════════════════════
+   MOBILE: layout apilado, sidebar al final
+   ════════════════════════════════ */
+.content-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--gap) 0;
+}
+
+/* Sidebar va naturalmente después del contenido en el DOM */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  /* En mobile: fila horizontal con scroll si hay muchos widgets */
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.sidebar__widget {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  /* En mobile: cada widget ocupa al menos la mitad */
+  flex: 1 1 calc(50% - var(--gap-sm));
+  min-width: 240px;
+}
+
+/* ── Título del widget ── */
+.sidebar__widget-title {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--heading);
+  padding: 10px 14px;
+  background-color: var(--primary-alt);
+  border-bottom: 2px solid var(--primary);
+  margin: 0;
+}
+
+/* ── Lista de items ── */
+.sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__list li {
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar__list li:last-child {
+  border-bottom: none;
+}
+
+.sidebar__list a {
+  display: block;
+  padding: 9px 0;
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+  font-family: var(--font-body);
+  transition: color 0.15s ease, padding-left 0.15s ease;
+  line-height: 1.4;
+  /* Touch target mínimo */
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar__list a:hover,
+.sidebar__list a:focus {
+  color: var(--primary);
+  padding-left: 4px;
+}
+
+/* ── "Últimas noticias": 2 líneas máximo ── */
+.sidebar__latest a {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  align-items: flex-start;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+/* ── Search dentro del widget ── */
+.sidebar__widget .search-form {
+  margin: 12px 14px;
+}
+
+.sidebar__widget .search-form input[type="search"] {
+  font-size: max(16px, 1em); /* evita zoom en iOS */
+  padding: 8px 10px;
+}
+
+.sidebar__widget .search-form button {
+  padding: 8px 12px;
+  min-height: 44px;
+}
+
+/* ── Redes sociales ── */
+.sidebar__social {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+}
+
+.sidebar__social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  /* Touch target: exacto 40px ≥ 44 si se agrega padding */
+  min-width: 44px;
+  min-height: 44px;
+  color: #fff;
+  border-radius: var(--radius);
+  font-size: 17px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar__social a:hover,
+.sidebar__social a:focus {
+  background-color: var(--primary);
+}
+
+/* ════════════════════════════════
+   TABLET ≥768px: sidebar en 2 cols
+   ════════════════════════════════ */
+@media (min-width: 768px) {
+  .sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sidebar__widget {
+    flex: 1 1 calc(50% - var(--gap-sm));
+  }
+}
+
+/* ════════════════════════════════
+   DESKTOP ≥1024px: layout lado a lado
+   Sidebar a la derecha, 1/4 del ancho
+   ════════════════════════════════ */
+@media (min-width: 1024px) {
+  .content-layout {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: start;
+  }
+
+  .sidebar {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: var(--gap);
+  }
+
+  .sidebar__widget {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+  }
+}

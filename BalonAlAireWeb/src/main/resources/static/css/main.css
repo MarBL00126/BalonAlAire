@@ -1,0 +1,237 @@
+/* ============================================================
+   main.css — Mobile-first. Tipografía fluida con clamp(),
+   .container, botones táctiles, grilla responsive.
+   ============================================================ */
+
+/* ── Importar fuentes originales ── */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&family=Lato:wght@400;700&display=swap');
+
+/* ── Tipografía base (mobile) ── */
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  background-color: var(--background);
+}
+
+/* ── Headings con clamp() — escala fluida entre 320px y 1366px ── */
+h1 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--heading);
+  line-height: 1.15;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--heading);
+  line-height: 1.2;
+  font-size: clamp(1.15rem, 3vw, 1.7rem);
+  margin-bottom: 0.4em;
+}
+
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--heading);
+  line-height: 1.25;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  margin-bottom: 0.4em;
+}
+
+h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--heading);
+  line-height: 1.3;
+  font-size: 1rem;
+  margin-bottom: 0.3em;
+}
+
+p {
+  margin-bottom: 10px;
+}
+
+strong, b { font-weight: 700; }
+em, i     { font-style: italic; }
+small     { font-size: 80%; }
+
+/* ── Container — padding seguro en mobile pequeño ── */
+.container {
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* ── Sección con padding vertical ── */
+.section {
+  padding-top: var(--gap);
+  padding-bottom: var(--gap);
+}
+
+/* ── Botón base — tamaño mínimo táctil 44×44px ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 22px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.btn--primary:hover,
+.btn--primary:focus {
+  background-color: var(--primary-dark);
+  color: #fff;
+}
+
+.btn--outline {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn--outline:hover,
+.btn--outline:focus {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+/* ── Formulario de búsqueda ── */
+.search-form {
+  display: flex;
+  gap: 0;
+  margin: 16px 0;
+}
+
+.search-form input[type="search"] {
+  flex: 1;
+  padding: 12px 14px;
+  min-height: 44px;
+  border: 1px solid var(--border-dark);
+  border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  font-size: 15px;
+  color: var(--text);
+  background-color: var(--surface);
+  outline: none;
+  transition: border-color 0.2s;
+  /* Evitar zoom en iOS al hacer focus en inputs con font-size < 16px */
+  font-size: max(16px, 1em);
+}
+
+.search-form input[type="search"]:focus {
+  border-color: var(--primary);
+}
+
+.search-form button {
+  min-height: 44px;
+  padding: 10px 18px;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.search-form button:hover {
+  background-color: var(--primary-dark);
+}
+
+/* ── Badge de categoría ── */
+.badge-category {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--primary);
+}
+
+.badge-category a {
+  color: inherit;
+}
+
+.badge-category a:hover {
+  text-decoration: underline;
+}
+
+/* ── Grilla de noticias: auto-fill, sin breakpoints manuales ── */
+.news-grid {
+  display: grid;
+  /* 1 col en 320px, 2 cols ~500px, 3 cols ~768px, 4 cols ~1100px */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: var(--gap);
+}
+
+/* Explícitamente 1 col en mobile muy pequeño */
+@media (max-width: 374px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Título de sección con línea roja ── */
+.section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: 8px;
+  margin-bottom: var(--gap);
+  color: var(--heading);
+}
+
+/* ── Utilidad: ocultar en mobile / mostrar en desktop ── */
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hide-mobile {
+    display: revert;
+  }
+}

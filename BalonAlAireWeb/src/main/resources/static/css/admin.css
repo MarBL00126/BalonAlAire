@@ -1,0 +1,673 @@
+
+@import url('/css/variables.css');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&family=Lato:wght@400;700&display=swap');
+
+/* =========================================
+   BALÓN AL AIRE — ADMIN
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+a {
+    color: var(--primary);
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* =========================================
+   LAYOUT
+   ========================================= */
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
+
+.admin-sidebar {
+    width: 240px;
+    background: var(--primary-dark);
+    color: #fff;
+    padding: 24px 16px;
+    flex-shrink: 0;
+    box-shadow: 2px 0 14px rgba(0, 0, 0, 0.22);
+}
+
+.admin-logo {
+    margin-bottom: 14px;
+    padding: 0 10px;
+}
+
+.admin-logo img {
+    width: 78px;
+    height: auto;
+    display: block;
+}
+
+.admin-logo span {
+    display: block;
+    font-size: 13px;
+    font-weight: normal;
+    margin-top: 5px;
+    opacity: 0.7;
+}
+
+.admin-back-link {
+    display: block;
+    margin: 0 0 22px;
+    padding: 9px 10px;
+    color: rgba(255, 255, 255, 0.88);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.admin-back-link:hover,
+.admin-back-link:focus {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-nav a {
+    display: block;
+    color: rgba(255, 255, 255, 0.86);
+    text-decoration: none;
+    padding: 11px 12px;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+.admin-nav a:hover {
+    background: rgba(0, 0, 0, 0.22);
+    color: #fff;
+}
+
+.admin-nav a.active {
+    background: #fff;
+    color: var(--primary-dark);
+}
+
+.admin-nav a.active:hover {
+    color: #fff;
+    background: var(--primary);
+}
+
+.admin-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+}
+
+.admin-checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: normal;
+}
+
+.admin-nav-logout {
+    margin: 0;
+}
+
+.admin-nav-logout button {
+    width: 100%;
+    display: block;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.86);
+    padding: 11px 12px;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.admin-nav-logout button:hover {
+    background: rgba(0, 0, 0, 0.22);
+    color: #fff;
+}
+
+/* =========================================
+   MAIN
+   ========================================= */
+
+.admin-main {
+    flex: 1;
+    padding: 30px;
+    min-width: 0;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.admin-header h1 {
+    font-size: 28px;
+    color: var(--heading);
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+}
+
+.admin-header p {
+    color: rgba(0, 0, 0, 0.68);
+    margin-top: 5px;
+}
+
+/* =========================================
+   DASHBOARD
+   ========================================= */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+}
+
+.dashboard-card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    text-decoration: none;
+    color: var(--text);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.dashboard-card h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--primary);
+    font-family: var(--font-heading);
+}
+
+.dashboard-card p {
+    color: var(--text);
+    font-size: 14px;
+}
+
+/* =========================================
+   CARDS
+   ========================================= */
+
+.admin-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.admin-card h2 {
+    font-size: 19px;
+    margin-bottom: 18px;
+    color: var(--heading);
+    font-family: var(--font-heading);
+}
+
+/* =========================================
+   TABLES
+   ========================================= */
+
+.admin-table-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow-x: auto;
+    box-shadow: var(--shadow);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 13px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.admin-table th {
+    background: #fff4ec;
+    color: var(--primary-dark);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.admin-table td {
+    font-size: 14px;
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+    background: #fff8f3;
+}
+
+/* =========================================
+   FORMS
+   ========================================= */
+
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--heading);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--surface);
+}
+
+.form-group textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
+.admin-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    border: none;
+    border-radius: var(--radius);
+    padding: 9px 15px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: var(--surface-alt);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: #e5e5e5;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+.btn-success {
+    background: #15803d;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #166534;
+}
+
+/* =========================================
+   STATUS
+   ========================================= */
+
+.status {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-published {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-draft {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* =========================================
+   ALERTS / MESSAGES
+   ========================================= */
+
+.admin-message {
+    padding: 12px 15px;
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+
+.admin-message.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.admin-message.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.admin-message.info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* =========================================
+   LOGIN
+   ========================================= */
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: var(--background);
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.login-logo {
+    width: 92px;
+    height: auto;
+    display: block;
+    margin: 0 auto 12px;
+}
+
+.login-title h1 {
+    font-size: 24px;
+    color: var(--primary-dark);
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+}
+
+.login-title p {
+    margin-top: 6px;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-back-link {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.login-back-link a {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* =========================================
+   TOOLBAR
+   ========================================= */
+
+.admin-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.admin-search {
+    display: flex;
+    gap: 8px;
+}
+
+.admin-search input {
+    min-width: 250px;
+    padding: 9px 12px;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    font-family: inherit;
+}
+
+/* =========================================
+   IMAGE / AD PREVIEW
+   ========================================= */
+
+.admin-image-preview {
+    max-width: 180px;
+    max-height: 100px;
+    object-fit: contain;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.ad-preview {
+    max-width: 220px;
+    max-height: 100px;
+    object-fit: contain;
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.admin-footer {
+    margin-top: 35px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.16);
+    color: rgba(0, 0, 0, 0.68);
+    font-size: 13px;
+}
+
+.image-preview {
+    margin-top: 10px;
+}
+
+.image-preview img {
+    max-width: min(300px, 100%);
+    max-height: 180px;
+    object-fit: contain;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-alt);
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .admin-layout {
+        flex-direction: column;
+    }
+
+    .admin-sidebar {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .admin-logo {
+        margin-bottom: 15px;
+    }
+
+    .admin-nav {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .admin-nav a {
+        white-space: nowrap;
+    }
+
+    .admin-main {
+        padding: 20px;
+    }
+
+    .admin-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-search {
+        width: 100%;
+    }
+
+    .admin-search input {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .admin-main {
+        padding: 15px;
+    }
+
+    .login-card {
+        padding: 24px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px;
+    }
+}
+

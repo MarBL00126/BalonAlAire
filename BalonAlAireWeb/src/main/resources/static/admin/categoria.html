@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías — Balón Al Aire</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            <img src="/assets/images/logo.png" alt="Balón Al Aire">
+            <span>Panel de administración</span>
+        </div>
+
+        <a href="/" class="admin-back-link">← Volver al sitio</a>
+
+        <nav class="admin-nav">
+            <a href="/admin">Dashboard</a>
+            <a href="/admin/noticias">Noticias</a>
+            <a href="/admin/categorias" class="active">Categorías</a>
+            <a href="/admin/publicidad">Publicidad</a>
+            <a href="/admin/configuracion">Configuración</a>
+            <form action="/admin/logout" method="POST" class="admin-nav-logout">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </nav>
+
+    </aside>
+
+    <main class="admin-main">
+
+        <header class="admin-header">
+
+            <div>
+                <h1>Categorías</h1>
+                <p>Administración de categorías.</p>
+            </div>
+
+            <button
+                id="new-category-button"
+                class="btn btn-primary">
+                Nueva categoría
+            </button>
+
+        </header>
+
+        <div id="categories-message"></div>
+
+        <section
+            class="admin-card"
+            id="category-form-container"
+            hidden>
+
+            <h2 id="category-form-title">
+                Nueva categoría
+            </h2>
+
+            <form id="category-form" class="admin-form">
+
+                <input type="hidden" id="category-id">
+
+                <div class="form-group">
+                    <label for="category-name">
+                        Nombre
+                    </label>
+
+                    <input
+                        type="text"
+                        id="category-name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category-slug">
+                        Slug
+                    </label>
+
+                    <input
+                        type="text"
+                        id="category-slug"
+                        required
+                    >
+                </div>
+
+                <div class="admin-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+                        Guardar
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancel-category-button"
+                        class="btn btn-secondary">
+                        Cancelar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        <section class="admin-table-container">
+
+            <table class="admin-table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Slug</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="categories-table-body">
+                    <tr>
+                        <td colspan="4">
+                            Cargando categorías...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/js/admin/admin-api.js"></script>
+<script src="/js/admin/categories.js"></script>
+
+</body>
+</html>

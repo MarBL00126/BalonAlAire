@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: balonAlAire
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:balon_al_aire_db}
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+
+  flyway:
+    validate-on-migrate: false

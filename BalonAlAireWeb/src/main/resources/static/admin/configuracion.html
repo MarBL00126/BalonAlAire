@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Configuración — Balón Al Aire</title>
+
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            <img src="/assets/images/logo.png" alt="Balón Al Aire">
+            <span>Panel de administración</span>
+        </div>
+
+        <a href="/" class="admin-back-link">← Volver al sitio</a>
+
+        <nav class="admin-nav">
+
+            <a href="/admin">
+                Dashboard
+            </a>
+
+            <a href="/admin/noticias">
+                Noticias
+            </a>
+
+            <a href="/admin/categorias">
+                Categorías
+            </a>
+
+            <a href="/admin/publicidad">
+                Publicidad
+            </a>
+
+            <a href="/admin/configuracion" class="active">
+                Configuración
+            </a>
+
+            <form action="/admin/logout" method="POST" class="admin-nav-logout">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="admin-main">
+
+        <header class="admin-header">
+
+            <div>
+
+                <h1>Configuración</h1>
+
+                <p>
+                    Configuración general y redes sociales del sitio.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- MENSAJE GENERAL -->
+
+        <div
+            id="settings-message"
+            class="admin-message">
+        </div>
+
+
+        <!-- =========================================
+             CONFIGURACIÓN GENERAL
+             ========================================= -->
+
+        <section class="admin-card">
+
+            <h2>Configuración general</h2>
+
+            <form
+                id="settings-form"
+                class="admin-form">
+
+                <!-- Nombre -->
+
+                <div class="form-group">
+
+                    <label for="site-name">
+                        Nombre del sitio
+                    </label>
+
+                    <input
+                        type="text"
+                        id="site-name"
+                        placeholder="Balón Al Aire"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Logo -->
+
+                <div class="form-group">
+
+                    <label for="logo-url">
+                        URL del logo
+                    </label>
+
+                    <input
+                        type="url"
+                        id="logo-url"
+                        placeholder="https://ejemplo.com/logo.png"
+                    >
+
+                    <div
+                        id="logo-preview"
+                        class="image-preview">
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+
+                <div class="form-group">
+
+                    <label for="footer-text">
+                        Texto del footer
+                    </label>
+
+                    <textarea
+                        id="footer-text"
+                        rows="4"
+                        placeholder="© 2026 Balón Al Aire. Todos los derechos reservados."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="admin-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Guardar configuración
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- =========================================
+             REDES SOCIALES
+             ========================================= -->
+
+        <section class="admin-card">
+
+            <div class="admin-toolbar">
+
+                <div>
+
+                    <h2>Redes sociales</h2>
+
+                    <p>
+                        Configurá los enlaces que aparecen en el sitio.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="social-message"
+                class="admin-message">
+            </div>
+
+
+            <div
+                id="social-links-container">
+
+                <p>
+                    Cargando redes sociales...
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- =========================================
+             CAMBIAR CONTRASEÑA
+             ========================================= -->
+
+        <section class="admin-card">
+
+            <h2>Cambiar contraseña</h2>
+
+            <div id="password-message" class="admin-message"></div>
+
+            <form id="change-password-form" class="admin-form">
+
+                <div class="form-group">
+                    <label for="current-password">Contraseña actual</label>
+                    <input
+                        type="password"
+                        id="current-password"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="new-password">Nueva contraseña</label>
+                    <input
+                        type="password"
+                        id="new-password"
+                        required
+                        minlength="6"
+                        autocomplete="new-password"
+                        placeholder="mínimo 6 caracteres"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm-password">Confirmar nueva contraseña</label>
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        required
+                        minlength="6"
+                        autocomplete="new-password"
+                    >
+                </div>
+
+                <div class="admin-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Cambiar contraseña
+                    </button>
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="/js/admin/admin-api.js"></script>
+<script src="/js/admin/settings.js"></script>
+<script>
+(function () {
+    "use strict";
+    const form    = document.getElementById("change-password-form");
+    const message = document.getElementById("password-message");
+
+    function showMsg(text, type) {
+        message.textContent = text;
+        message.className   = "admin-message " + type;
+        setTimeout(() => { message.textContent = ""; message.className = "admin-message"; }, 4000);
+    }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const currentPassword = document.getElementById("current-password").value;
+        const newPassword     = document.getElementById("new-password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
+
+        if (newPassword !== confirmPassword) {
+            showMsg("Las contraseñas nuevas no coinciden.", "error");
+            return;
+        }
+        try {
+            await apiPost("/auth/change-password", { currentPassword, newPassword });
+            showMsg("Contraseña cambiada correctamente.", "success");
+            form.reset();
+        } catch (err) {
+            showMsg(err.message, "error");
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

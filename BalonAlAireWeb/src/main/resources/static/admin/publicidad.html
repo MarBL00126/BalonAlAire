@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Publicidad - Balón Al Aire</title>
+
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            <img src="/assets/images/logo.png" alt="Balón Al Aire">
+            <span>Panel de administración</span>
+        </div>
+
+        <a href="/" class="admin-back-link">← Volver al sitio</a>
+
+        <nav class="admin-nav">
+
+            <a href="/admin">
+                Dashboard
+            </a>
+
+            <a href="/admin/noticias">
+                Noticias
+            </a>
+
+            <a href="/admin/categorias">
+                Categorías
+            </a>
+
+            <a href="/admin/publicidad" class="active">
+                Publicidad
+            </a>
+
+            <a href="/admin/configuracion">
+                Configuración
+            </a>
+
+            <form action="/admin/logout" method="POST" class="admin-nav-logout">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="admin-main">
+
+        <header class="admin-header">
+
+            <div>
+                <h1>Publicidad</h1>
+
+                <p>
+                    Administrá los anuncios y banners del sitio.
+                </p>
+            </div>
+
+            <button
+                id="new-advertisement-button"
+                class="btn btn-primary">
+                + Nuevo anuncio
+            </button>
+
+        </header>
+
+
+        <div id="advertisements-message"
+             class="admin-message">
+        </div>
+
+
+        <!-- FORMULARIO -->
+
+        <section
+            id="advertisement-form-container"
+            class="admin-card"
+            style="display: none;">
+
+            <h2 id="advertisement-form-title">
+                Nuevo anuncio
+            </h2>
+
+            <form
+                id="advertisement-form"
+                class="admin-form">
+
+                <input
+                    type="hidden"
+                    id="advertisement-id">
+
+
+                <div class="form-group">
+
+                    <label for="advertisement-name">
+                        Nombre
+                    </label>
+
+                    <input
+                        type="text"
+                        id="advertisement-name"
+                        required
+                        placeholder="Ej: Sponsor principal">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="advertisement-image">
+                        Imagen
+                    </label>
+
+                    <input
+                        type="file"
+                        id="advertisement-image"
+                        accept="image/png,image/jpeg,image/webp">
+
+                    <small>
+                        PNG, JPG o WebP.
+                    </small>
+
+                    <div
+                        id="advertisement-image-preview"
+                        class="image-preview">
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="advertisement-link">
+                        URL destino
+                    </label>
+
+                    <input
+                        type="url"
+                        id="advertisement-link"
+                        required
+                        placeholder="https://ejemplo.com">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="advertisement-position">
+                        Posición
+                    </label>
+
+                    <select
+                        id="advertisement-position"
+                        required>
+
+                        <option value="">
+                            Seleccionar posición
+                        </option>
+
+                        <option value="header-banner">
+                            Header banner
+                        </option>
+
+                        <option value="sidebar">
+                            Sidebar
+                        </option>
+
+                        <option value="home">
+                            Home
+                        </option>
+
+                        <option value="footer">
+                            Footer
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            id="advertisement-active"
+                            checked>
+
+                        Activo
+                    </label>
+
+                </div>
+
+
+                <div class="admin-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Guardar anuncio
+
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancel-advertisement-button"
+                        class="btn btn-secondary">
+
+                        Cancelar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- LISTADO -->
+
+        <section class="admin-card">
+
+            <h2>Anuncios existentes</h2>
+
+            <div class="admin-table-container">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Posición</th>
+                        <th>Activo</th>
+                        <th>Acciones</th>
+                    </tr>
+
+                    </thead>
+
+                    <tbody id="advertisements-table-body">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="/js/admin/admin-api.js"></script>
+<script src="/js/admin/ads.js"></script>
+
+</body>
+</html>

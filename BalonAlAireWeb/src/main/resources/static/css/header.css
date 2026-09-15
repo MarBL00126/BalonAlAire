@@ -1,0 +1,331 @@
+/* ============================================================
+   header.css — Mobile-first. Nav oscura, hamburguesa animada,
+   búsqueda expandible en mobile.
+   ============================================================ */
+
+/* ── Estructura del header ── */
+.site-header {
+  background-color: var(--primary-dark);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+
+/* ── Contenedor del header ── */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding-top: 0;
+  padding-bottom: 0;
+  gap: 8px;
+  position: relative;
+}
+
+/* ── Logo ── */
+.site-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.site-logo img {
+  height: 40px;        /* compact en mobile */
+  width: auto;
+  display: block;
+}
+
+/* ── Botón hamburguesa (visible por defecto = mobile-first) ── */
+.menu-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+  z-index: 2;
+  /* Accesibilidad: foco visible */
+  border-radius: var(--radius);
+}
+
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+}
+
+/* Las tres barras del hamburguesa */
+.menu-toggle__bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.2s ease, width 0.2s ease;
+  transform-origin: center;
+}
+
+/* Animación X cuando está abierto */
+.menu-toggle[aria-expanded="true"] .menu-toggle__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.menu-toggle[aria-expanded="true"] .menu-toggle__bar:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+.menu-toggle[aria-expanded="true"] .menu-toggle__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Botón de búsqueda (lupa) ── */
+.search-button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius);
+  transition: color 0.2s ease;
+  z-index: 2;
+}
+
+.search-button:hover,
+.search-button:focus-visible {
+  color: var(--primary);
+  outline: none;
+}
+
+.search-button:focus-visible {
+  outline: 2px solid var(--primary);
+}
+
+/* ── Grupo derecho: lupa + botón Admin ── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+/* ── Botón Admin ── */
+.btn-admin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  min-height: 36px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.9);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background-color: transparent;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-admin:visited {
+  color: rgba(255,255,255,0.9);
+}
+
+.btn-admin:hover,
+.btn-admin:focus-visible,
+.btn-admin:visited:hover,
+.btn-admin:visited:focus-visible {
+  color: var(--primary);
+  border-color: transparent;
+  background-color: transparent;
+  outline: none;
+}
+
+.btn-admin:active {
+  color: var(--primary);
+}
+
+
+/* ── NAV: oculto por defecto en mobile ── */
+.main-menu {
+  /* Fuera del flujo: aparece como panel deslizante */
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--secondary);
+  z-index: 999;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  overflow: hidden;
+
+  /* Slide animation */
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease, visibility 0s linear 0.3s;
+}
+
+/* Estado abierto */
+.main-menu.is-open {
+  max-height: 400px;    /* suficientemente grande para todos los links */
+  opacity: 1;
+  visibility: visible;
+  transition: max-height 0.3s ease, opacity 0.25s ease, visibility 0s linear 0s;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.nav-menu li a {
+  display: block;
+  padding: 13px 20px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: color 0.15s ease, background-color 0.15s ease;
+  /* Toque mínimo táctil */
+  min-height: 44px;
+}
+
+.nav-menu li:last-child a {
+  border-bottom: none;
+}
+
+.nav-menu li a:hover,
+.nav-menu li a:focus {
+  color: #fff;
+  background-color: var(--primary);
+}
+
+/* ── Overlay oscuro detrás del menú abierto ── */
+.menu-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+
+  z-index: 998;
+  cursor: pointer;
+}
+
+.menu-overlay.active {
+  display: block;
+}
+
+/* ── Overlay de búsqueda (debajo del header) ── */
+.search-overlay {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--surface);
+  padding: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  z-index: 1001;
+  border-top: 3px solid var(--primary);
+}
+
+.search-overlay.active {
+  display: block;
+}
+
+.search-overlay .search-form {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* ════════════════════════════════════════════════
+   TABLET  ≥768px
+   ════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+  .site-logo img {
+    height: 48px;
+  }
+
+  .header-container {
+    min-height: 60px;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   DESKTOP  ≥1024px — menú horizontal siempre visible
+   ════════════════════════════════════════════════ */
+@media (min-width: 1024px) {
+  /* Hamburguesa oculta */
+  .menu-toggle {
+    display: none;
+  }
+
+  /* Nav siempre visible, inline */
+  .main-menu {
+    position: static;
+    max-height: none;
+    opacity: 1;
+    visibility: visible;
+    overflow: visible;
+    box-shadow: none;
+    background: transparent;
+    flex: 1;
+    transition: none;
+  }
+
+  .main-menu.is-open {
+    /* resetear — en desktop siempre está "open" */
+    max-height: none;
+  }
+
+  .nav-menu {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-top: none;
+    gap: 2px;
+  }
+
+  .nav-menu li a {
+    padding: 18px 14px;
+    border-bottom: none;
+    color: rgba(255,255,255,0.9);
+    min-height: auto;
+  }
+
+  .nav-menu li a:hover,
+  .nav-menu li a:focus {
+    color: var(--primary);
+    background-color: transparent;
+  }
+
+  .site-logo img {
+    height: 52px;
+  }
+}
