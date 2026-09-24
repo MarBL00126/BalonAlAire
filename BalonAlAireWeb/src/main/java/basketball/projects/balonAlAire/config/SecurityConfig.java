@@ -11,11 +11,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import basketball.projects.balonAlAire.repository.UserRepository;
 
 @Configuration
 public class SecurityConfig {
+
+        /**
+         * Permite que Spring Boot respete el header X-Forwarded-Proto que envía Railway.
+         * Sin esto, los redirects generan URLs con http://, causando Mixed Content.
+         */
+        @Bean
+        public ForwardedHeaderFilter forwardedHeaderFilter() {
+                return new ForwardedHeaderFilter();
+        }
 
         @Bean
         public PasswordEncoder passwordEncoder() {
