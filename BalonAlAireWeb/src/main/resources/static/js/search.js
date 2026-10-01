@@ -45,8 +45,8 @@ async function runSearch(query) {
         return;
     }
 
-    const posts = await fetchJSON(`/posts?search=${encodeURIComponent(query)}`);
-    const matches = posts.filter((post) => matchesQuery(post, query));
+    const data = await fetchJSON(`/posts?search=${encodeURIComponent(query)}`);
+    const matches = data.content ?? data;   // soporta Page<> y array plano
 
     status.textContent = matches.length
         ? `${matches.length} resultado(s) para "${query}"`

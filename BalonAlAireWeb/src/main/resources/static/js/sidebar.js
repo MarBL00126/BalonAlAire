@@ -27,7 +27,8 @@ async function renderLatestNews() {
         return;
     }
 
-    const posts = await fetchJSON("/posts");
+    const data = await fetchJSON("/posts");
+    const posts = data.content ?? data;   // soporta Page<> y array plano
     const latest = posts.slice(0, 5);
 
     lists.forEach((list) => {

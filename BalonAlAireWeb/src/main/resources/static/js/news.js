@@ -73,7 +73,8 @@ async function renderNews() {
         return;
     }
 
-    const posts = await fetchJSON("/posts");
+    const data = await fetchJSON("/posts");
+    const posts = data.content ?? data;   // soporta Page<> y array plano
     const featuredCount = 3;
 
     if (featuredGrid) {

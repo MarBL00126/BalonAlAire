@@ -4,7 +4,8 @@ async function renderAds() {
         return;
     }
 
-    const ads = await fetchJSON("/advertisements");
+    const data = await fetchJSON("/advertisements");
+    const ads = data.content ?? data;   // soporta Page<> y array plano
     slots.forEach((slot) => {
         const position = slot.getAttribute("data-ad-slot");
         const candidates = ads
