@@ -13,18 +13,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import basketball.projects.balonAlAire.dto.CategoryRequest;
 import basketball.projects.balonAlAire.dto.PostResponse;
 import basketball.projects.balonAlAire.model.Category;
 import basketball.projects.balonAlAire.service.CategoryService;
+import basketball.projects.balonAlAire.service.PostService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
     private final CategoryService categoryService;
+    private final PostService postService;
 
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService,PostService postService) {
         this.categoryService = categoryService;
+        this.postService=postService;
     }
 
     @GetMapping
@@ -39,21 +43,21 @@ public class CategoryController {
 
     @GetMapping("/{slug}/posts")
     public List<PostResponse> getPostsByCategorySlug(@PathVariable String slug) {
-        return categoryService.findPostsByCategorySlug(slug);
+        return postService.getPostsByCategorySlug(slug);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Category create(@Valid @RequestBody Category category) {
-        return categoryService.save(category);
+    public Category create(@Valid @RequestBody CategoryRequest request) {
+        return categoryService.save(request);
     }
 
     @PutMapping("/{id}")
     public Category update(
             @PathVariable Integer id,
-            @Valid @RequestBody Category category) {
+            @Valid @RequestBody CategoryRequest request) {
 
-        return categoryService.update(id, category);
+        return categoryService.update(id, request);
     }
 
     @DeleteMapping("/{id}")

@@ -23,13 +23,14 @@
             <form class="login-form" method="POST" action="/admin/login">
 
                 <div class="form-group">
-                    <label for="username">Usuario</label>
+                    <label for="username">Usuario o email</label>
                     <input
                         type="text"
                         id="username"
                         name="username"
                         required
                         autocomplete="username"
+                        inputmode="email"
                     >
                 </div>
 
@@ -53,7 +54,7 @@
             <div id="login-message"></div>
 
             <p style="margin-top: 16px; text-align: center; font-size: 13px;">
-                ¿Primer acceso? <a href="/admin/register.html">Registrar nuevo usuario</a>
+                <a href="/admin/forgot-password.html">¿Olvidaste tu contraseña?</a>
             </p>
 
             <p class="login-back-link">
@@ -67,6 +68,7 @@
 </main>
 
 <script src="/js/admin/login.js"></script>
+<script src="/js/admin/admin-utils.js"></script>
 
 </body>
 </html>

@@ -3,6 +3,17 @@ spring:
     name: balonAlAire
   config:
     import: optional:file:.env[.properties]
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS_ENABLE:true}
   datasource:
     url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:balon_al_aire_db}
     username: ${PGUSER:postgres}
@@ -14,4 +25,25 @@ spring:
     show-sql: false
 
   flyway:
-    validate-on-migrate: false
+    validate-on-migrate: true
+
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+    cache-names:
+      - categories
+      - social-links
+      - settings
+app:
+  public-url: ${APP_PUBLIC_URL:https://balonalaire-production.up.railway.app}
+  mail:
+    from: ${MAIL_FROM:${MAIL_USERNAME:}}
+storage:
+  endpoint: ${STORAGE_ENDPOINT:}
+  public-url: ${STORAGE_PUBLIC_URL:}
+  access-key: ${STORAGE_ACCESS_KEY:}
+  secret-key: ${STORAGE_SECRET_KEY:}
+  region: ${STORAGE_REGION:auto}
+  bucket: ${STORAGE_BUCKET:}
+  path-style: ${STORAGE_PATH_STYLE:true}

@@ -1,13 +1,15 @@
 package basketball.projects.balonAlAire.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import basketball.projects.balonAlAire.dto.AdvertisementRequest;
 import basketball.projects.balonAlAire.model.Advertisement;
 import basketball.projects.balonAlAire.repository.AdvertisementRepository;
 
@@ -21,53 +23,46 @@ public class AdvertisementService {
         this.advertisementRepository = advertisementRepository;
     }
 
-    public List<Advertisement> getAllAdvertisements() {
+    public Page<Advertisement> getAllAdvertisements(Pageable pageable) {
 
-        return advertisementRepository.findAll();
+        return advertisementRepository.findAll(pageable);
     }
 
     public Advertisement saveAdvertisement(
-            Advertisement advertisement) {
+            AdvertisementRequest request) {
 
         LocalDateTime now = LocalDateTime.now();
 
-        if (advertisement.getCreatedAt() == null) {
-            advertisement.setCreatedAt(now);
-        }
+    Advertisement advertisement = new Advertisement();
 
-        advertisement.setUpdatedAt(now);
+    advertisement.setName(request.getName());
+    advertisement.setImageUrl(request.getImageUrl());
+    advertisement.setLinkUrl(request.getLinkUrl());
+    advertisement.setPosition(request.getPosition());
+    advertisement.setActive(request.isActive());
 
-        return advertisementRepository.save(advertisement);
+    advertisement.setCreatedAt(now);
+    advertisement.setUpdatedAt(now);
+
+    return advertisementRepository.save(advertisement);
     }
 
     public Optional<Advertisement> updateAdvertisement(
             Integer id,
-            Advertisement changes) {
+            AdvertisementRequest request) {
 
         return advertisementRepository.findById(id)
-                .map(existing -> {
+            .map(existing -> {
 
-                    existing.setName(
-                            changes.getName());
+                existing.setName(request.getName());
+                existing.setImageUrl(request.getImageUrl());
+                existing.setLinkUrl(request.getLinkUrl());
+                existing.setPosition(request.getPosition());
+                existing.setActive(request.isActive());
+                existing.setUpdatedAt(LocalDateTime.now());
 
-                    existing.setImageUrl(
-                            changes.getImageUrl());
-
-                    existing.setLinkUrl(
-                            changes.getLinkUrl());
-
-                    existing.setPosition(
-                            changes.getPosition());
-
-                    existing.setActive(
-                            changes.isActive());
-
-                    existing.setUpdatedAt(
-                            LocalDateTime.now());
-
-                    return advertisementRepository.save(
-                            existing);
-                });
+                return advertisementRepository.save(existing);
+            });
     }
 
     public void deleteAdvertisement(Integer id) {

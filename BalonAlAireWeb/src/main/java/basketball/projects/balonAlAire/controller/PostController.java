@@ -1,7 +1,10 @@
 package basketball.projects.balonAlAire.controller;
 
-import java.util.List;
 
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import basketball.projects.balonAlAire.dto.PostRequest;
 import basketball.projects.balonAlAire.dto.PostResponse;
-import basketball.projects.balonAlAire.model.Post;
 import basketball.projects.balonAlAire.service.PostService;
 import jakarta.validation.Valid;
 
@@ -29,11 +32,13 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostResponse> getAll(@RequestParam(required = false) String search) {
+    public Page<PostResponse> getAll(
+        @RequestParam(required = false) String search, 
+        @PageableDefault(size=20) Pageable pageable) {
         if (search == null || search.isBlank()) {
-            return postService.getAllPosts();
+            return postService.getAllPosts(pageable);
         }
-        return postService.searchPosts(search);
+        return postService.searchPosts(search,pageable);
     }
 
     @GetMapping("/{slug}")
@@ -43,21 +48,21 @@ public class PostController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Post create(@Valid @RequestBody Post post) {
-        return postService.save(post);
+    public PostResponse create(@Valid @RequestBody PostRequest request) {
+        return postService.save(request);
     }
 
     @PutMapping("/{id}")
-    public Post update(
-            @PathVariable Integer id,
-            @Valid @RequestBody Post post) {
+    public PostResponse update(
+            @PathVariable Long id,
+            @Valid @RequestBody PostRequest request) {
 
-        return postService.update(id, post);
+        return postService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer id) {
+    public void delete(@PathVariable Long id) {
         postService.delete(id);
     }
 

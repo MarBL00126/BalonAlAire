@@ -6,58 +6,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import basketball.projects.balonAlAire.model.User;
-import basketball.projects.balonAlAire.repository.UserRepository;
 
 @Service
 public class AuthService {
-    private final UserRepository userRepository;
+
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
-
-        this.userRepository = userRepository;
+    public AuthService(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Valida credenciales y devuelve el usuario si son correctas.
+     * El registro y cambio de contraseña se delegan a UserService.
+     */
     public User login(String username, String password) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+        User user = userService.getByUsernameOrEmail(username)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, "Invalid username or password"));
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }
         return user;
     }
-
-    public User register(String username, String rawPassword, String email) {
-        if (userRepository.findByUsername(username).isPresent()) {
-            throw new ResponseStatusException(
-                org.springframework.http.HttpStatus.CONFLICT,
-                "El nombre de usuario ya existe");
-        }
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(rawPassword));
-        user.setRole("ADMIN");
-        user.setEmail(email);
-        user.setCreatedAt(java.time.LocalDateTime.now());
-        return userRepository.save(user);
-    }
-
-    public void changePassword(String username, String currentPassword, String newPassword) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new ResponseStatusException(
-                org.springframework.http.HttpStatus.NOT_FOUND,
-                "Usuario no encontrado"));
-        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new ResponseStatusException(
-                org.springframework.http.HttpStatus.UNAUTHORIZED,
-                "La contraseña actual es incorrecta");
-        }
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-    }
-
 }

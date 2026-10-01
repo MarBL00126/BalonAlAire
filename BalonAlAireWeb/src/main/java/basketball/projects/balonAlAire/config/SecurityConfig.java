@@ -5,21 +5,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 
-import basketball.projects.balonAlAire.repository.UserRepository;
-
 @Configuration
 public class SecurityConfig {
 
         /**
-         * Permite que Spring Boot respete el header X-Forwarded-Proto que envía Railway.
+         * Permite que Spring Boot respete el header X-Forwarded-Proto que envï¿½a Railway.
          * Sin esto, los redirects generan URLs con http://, causando Mixed Content.
          */
         @Bean
@@ -72,8 +67,10 @@ public class SecurityConfig {
                                                 .requestMatchers(
                                                                 "/admin/login",
                                                                 "/admin/login.html",
-                                                                "/admin/register",
-                                                                "/admin/register.html",
+                                                                "/admin/forgot-password",
+                                                                "/admin/forgot-password.html",
+                                                                "/admin/reset-password",
+                                                                "/admin/reset-password.html",
                                                                 "/css/admin.css",
                                                                 "/js/admin/login.js")
                                                 .permitAll()
@@ -85,8 +82,14 @@ public class SecurityConfig {
                                                 // LOGIN API
                                                 // =====================================
 
-                                                .requestMatchers("/api/auth/login", "/api/auth/register")
+                                                .requestMatchers("/api/auth/login")
                                                 .permitAll()
+                                                .requestMatchers("/api/auth/forgot-password")
+                                                .permitAll()
+                                                .requestMatchers("/api/auth/reset-password")
+                                                .permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/auth/register")
+                                                .hasRole("ADMIN")
 
                                                 // =====================================
                                                 // UPLOADS
@@ -174,17 +177,6 @@ public class SecurityConfig {
                                                 .permitAll());
 
                 return http.build();
-        }
-
-        @Bean
-        public UserDetailsService userDetailsService(UserRepository userRepository) {
-
-                return username -> userRepository.findByUsername(username)
-                                .map(user -> User.withUsername(user.getUsername())
-                                                .password(user.getPassword())
-                                                .roles(user.getRole())
-                                                .build())
-                                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         }
 
 }

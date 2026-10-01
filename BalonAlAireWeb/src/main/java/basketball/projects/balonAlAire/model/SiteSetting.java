@@ -1,5 +1,7 @@
 package basketball.projects.balonAlAire.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,4 +25,8 @@ public class SiteSetting {
 
     @Column(name = "settings_value")
     private String settingsValue;
+    @Column(name="created_at")
+    private LocalDateTime createdAt;
+    @Column(name="updated_at")
+    private LocalDateTime updatedAt;
 }

@@ -3,21 +3,30 @@ package basketball.projects.balonAlAire.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import basketball.projects.balonAlAire.dto.CategoryResponse;
+import basketball.projects.balonAlAire.dto.PostRequest;
 import basketball.projects.balonAlAire.dto.PostResponse;
 import basketball.projects.balonAlAire.model.Post;
+import basketball.projects.balonAlAire.model.PostStatus;
+import basketball.projects.balonAlAire.model.Category;
+import basketball.projects.balonAlAire.repository.CategoryRepository;
 import basketball.projects.balonAlAire.repository.PostRepository;
 
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final CategoryRepository categoryRepository;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository,CategoryRepository categoryRepository) {
         this.postRepository = postRepository;
+        this.categoryRepository=categoryRepository;
     }
 
     public PostResponse getBySlug(String slug) {
@@ -27,9 +36,9 @@ public class PostService {
 
     }
 
-    public List<PostResponse> getAllPosts() {
-        return postRepository.findAllByOrderByPublishedAtDesc()
-                .stream().map(this::toResponse).toList();
+    public Page<PostResponse> getAllPosts(Pageable pageable) {
+        return postRepository.findAllByOrderByPublishedAtDesc(pageable)
+                .map(this::toResponse);
     }
 
     public List<PostResponse> getPostsByCategorySlug(String slug) {
@@ -39,53 +48,67 @@ public class PostService {
                 .toList();
     }
 
-    public List<PostResponse> searchPosts(String search) {
+    public Page<PostResponse> searchPosts(String search,Pageable pageable) {
         return postRepository
-                .findByTitleContainingIgnoreCaseOrExcerptContainingIgnoreCaseOrderByPublishedAtDesc(search, search)
-                .stream()
-                .map(this::toResponse)
-                .toList();
+                .fullTextSearch(search, pageable)
+                .map(this::toResponse);
     }
 
-    public Post save(Post post) {
+    public PostResponse save(PostRequest request) {
 
         LocalDateTime now = LocalDateTime.now();
 
-        if (post.getCreatedAt() == null) {
-            post.setCreatedAt(now);
-        }
+        List<Category> categories =
+                categoryRepository.findAllById(request.getCategoryIds());
 
+        Post post = new Post();
+
+        post.setTitle(request.getTitle());
+        post.setSlug(request.getSlug());
+        post.setExcerpt(request.getExcerpt());
+        post.setContent(request.getContent());
+        post.setImgUrl(request.getImgUrl());
+        post.setAuthor(request.getAuthor());
+        post.setStatus(
+                request.getStatus() != null
+                        ? request.getStatus()
+                        : PostStatus.DRAFT
+        );
+        post.setPublishedAt(request.getPublishedAt());
+        post.setCategories(categories);
+
+        post.setCreatedAt(now);
         post.setUpdatedAt(now);
 
-        return postRepository.save(post);
+        return toResponse(postRepository.save(post));
     }
 
-    public Post update(Integer id, Post changes) {
+    public PostResponse update(Long id, PostRequest request) {
 
         Post existing = postRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Post not found"));
 
-        existing.setTitle(changes.getTitle());
-        existing.setSlug(changes.getSlug());
-        existing.setExcerpt(changes.getExcerpt());
-        existing.setContent(changes.getContent());
-        existing.setImgUrl(changes.getImgUrl());
-        existing.setAuthor(changes.getAuthor());
-        existing.setStatus(changes.getStatus());
-        existing.setPublishedAt(changes.getPublishedAt());
-        existing.setCategories(changes.getCategories());
+        List<Category> categories = categoryRepository.findAllById(request.getCategoryIds());
+        existing.setTitle(request.getTitle());
+        existing.setSlug(request.getSlug());
+        existing.setExcerpt(request.getExcerpt());
+        existing.setContent(request.getContent());
+        existing.setImgUrl(request.getImgUrl());
+        existing.setAuthor(request.getAuthor());
+        existing.setStatus(request.getStatus());
+        existing.setPublishedAt(request.getPublishedAt());
+        existing.setCategories(categories);
         existing.setUpdatedAt(LocalDateTime.now());
 
-        return postRepository.save(existing);
+        return toResponse(postRepository.save(existing));
     }
 
-    public void delete(Integer id) {
 
-        if (!postRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Post not found");
-        }
+    public void delete(Long id) {
+        postRepository.findById(id)
+        .orElseThrow(()->new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Post not found"));
 
         postRepository.deleteById(id);
     }
@@ -93,7 +116,7 @@ public class PostService {
     private PostResponse toResponse(Post post) {
         List<CategoryResponse> categories = post.getCategories()
                 .stream().map(category -> new CategoryResponse(category.getName(), category.getSlug())).toList();
-        return new PostResponse(Long.valueOf(post.getId()), post.getTitle(), post.getSlug(), post.getExcerpt(),
+        return new PostResponse(post.getId(), post.getTitle(), post.getSlug(), post.getExcerpt(),
                 post.getContent(), post.getImgUrl(), post.getAuthor(), post.getStatus(), post.getPublishedAt(), categories);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+import basketball.projects.balonAlAire.dto.SocialLinkRequest;
 import basketball.projects.balonAlAire.model.SocialLink;
 import basketball.projects.balonAlAire.service.SocialLinkService;
 
@@ -33,13 +34,13 @@ public class SocialLinkController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SocialLink create(@Valid @RequestBody SocialLink socialLink) {
-        return socialLinkService.createSocialLink(socialLink);
+    public SocialLink create(@Valid @RequestBody SocialLinkRequest request) {
+        return socialLinkService.createSocialLink(request);
     }
 
     @PutMapping("/{id}")
-    public SocialLink update(@PathVariable Integer id, @Valid @RequestBody SocialLink changes) {
-        return socialLinkService.updateSocialLink(id, changes)
+    public SocialLink update(@PathVariable Integer id, @Valid @RequestBody SocialLinkRequest request) {
+        return socialLinkService.updateSocialLink(id, request)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Social link not found"));
     }
 }

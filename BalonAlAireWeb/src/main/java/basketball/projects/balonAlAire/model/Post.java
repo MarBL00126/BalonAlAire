@@ -3,8 +3,13 @@ package basketball.projects.balonAlAire.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.BatchSize;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,8 +25,9 @@ import lombok.Data;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @ManyToMany
+    private Long id; 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @BatchSize(size = 20)
     @JoinTable(name = "post_categories", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
     @Column(nullable = false)
@@ -36,8 +42,9 @@ public class Post {
     private String imgUrl;
     @Column(nullable = false)
     private String author;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private PostStatus status=PostStatus.DRAFT;
     @Column(name = "published_at")
     private LocalDateTime publishedAt;
     @Column(name = "created_at")

@@ -1,4 +1,5 @@
 let categories = [];
+let elementId="categories-message"
 
 document.addEventListener("DOMContentLoaded", () => {
     loadCategories();
@@ -28,7 +29,7 @@ async function loadCategories() {
         renderCategories(categories);
 
     } catch (error) {
-        showMessage(error.message, "error");
+        showMessage(elementId,error.message, "error");
     }
 }
 
@@ -134,14 +135,14 @@ async function saveCategory(event) {
         if (id) {
             await apiPut(`/categories/${id}`, category);
 
-            showMessage(
+            showMessage(elementId,
                 "Categoría actualizada correctamente.",
                 "success"
             );
         } else {
             await apiPost("/categories", category);
 
-            showMessage(
+            showMessage(elementId,
                 "Categoría creada correctamente.",
                 "success"
             );
@@ -151,7 +152,7 @@ async function saveCategory(event) {
         await loadCategories();
 
     } catch (error) {
-        showMessage(error.message, "error");
+        showMessage(elementId,error.message, "error");
     }
 }
 
@@ -162,7 +163,7 @@ function editCategory(id) {
     );
 
     if (!category) {
-        showMessage("No se encontró la categoría.", "error");
+        showMessage(elementId,"No se encontró la categoría.", "error");
         return;
     }
 
@@ -182,7 +183,7 @@ async function deleteCategory(id) {
     try {
         await apiDelete(`/categories/${id}`);
 
-        showMessage(
+        showMessage(elementId,
             "Categoría eliminada correctamente.",
             "success"
         );
@@ -190,33 +191,11 @@ async function deleteCategory(id) {
         await loadCategories();
 
     } catch (error) {
-        showMessage(error.message, "error");
+        showMessage(elementId,error.message, "error");
     }
 }
 
 
-function showMessage(text, type) {
-    const message = document.getElementById("categories-message");
-
-    message.textContent = text;
-    message.className = `admin-message ${type}`;
-
-    setTimeout(() => {
-        message.textContent = "";
-        message.className = "admin-message";
-    }, 4000);
-}
 
 
-function escapeHtml(value) {
-    if (value === null || value === undefined) {
-        return "";
-    }
 
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}

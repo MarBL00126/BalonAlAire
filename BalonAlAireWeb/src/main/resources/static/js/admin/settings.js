@@ -1,4 +1,5 @@
 let socialLinks = [];
+let elementId="settings-message"
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -52,7 +53,7 @@ async function loadSettings() {
             error
         );
 
-        showMessage(
+        showMessage(elementId,
             error.message,
             "error"
         );
@@ -90,7 +91,7 @@ async function saveSettings(event) {
             settings
         );
 
-        showMessage(
+        showMessage(elementId,
             "Configuración guardada correctamente.",
             "success"
         );
@@ -102,7 +103,7 @@ async function saveSettings(event) {
             error
         );
 
-        showMessage(
+        showMessage(elementId,
             error.message,
             "error"
         );
@@ -178,7 +179,8 @@ async function loadSocialLinks() {
             error
         );
 
-        showSocialMessage(
+        showMessage(
+            "social-message",
             error.message,
             "error"
         );
@@ -351,7 +353,8 @@ async function saveSocialNetwork(network) {
         }
 
 
-        showSocialMessage(
+        showMessage(
+            "social-message",
             `${network} guardado correctamente.`,
             "success"
         );
@@ -366,91 +369,11 @@ async function saveSocialNetwork(network) {
             error
         );
 
-        showSocialMessage(
+        showMessage(
+            "social-message",
             error.message,
             "error"
         );
     }
 }
 
-
-/* =====================================================
-   MENSAJES
-   ===================================================== */
-
-function showMessage(text, type) {
-
-    const message =
-        document.getElementById(
-            "settings-message"
-        );
-
-
-    message.textContent = text;
-
-    message.className =
-        `admin-message ${type}`;
-
-
-    setTimeout(() => {
-
-        message.textContent = "";
-
-        message.className =
-            "admin-message";
-
-    }, 4000);
-}
-
-
-function showSocialMessage(text, type) {
-
-    const message =
-        document.getElementById(
-            "social-message"
-        );
-
-
-    message.textContent = text;
-
-    message.className =
-        `admin-message ${type}`;
-
-
-    setTimeout(() => {
-
-        message.textContent = "";
-
-        message.className =
-            "admin-message";
-
-    }, 4000);
-}
-
-
-/* =====================================================
-   ESCAPE HTML
-   ===================================================== */
-
-function escapeHtml(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return "";
-    }
-
-
-    return String(value)
-
-        .replaceAll("&", "&amp;")
-
-        .replaceAll("<", "&lt;")
-
-        .replaceAll(">", "&gt;")
-
-        .replaceAll('"', "&quot;")
-
-        .replaceAll("'", "&#039;");
-}

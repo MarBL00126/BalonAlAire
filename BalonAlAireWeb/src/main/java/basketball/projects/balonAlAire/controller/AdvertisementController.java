@@ -1,7 +1,8 @@
 package basketball.projects.balonAlAire.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+import basketball.projects.balonAlAire.dto.AdvertisementRequest;
 import basketball.projects.balonAlAire.model.Advertisement;
 import basketball.projects.balonAlAire.service.AdvertisementService;
 
@@ -30,28 +32,28 @@ public class AdvertisementController {
     }
 
     @GetMapping
-    public List<Advertisement> getAll() {
+    public Page<Advertisement> getAll(@PageableDefault(size=20) Pageable pageable) {
 
         return advertisementService
-                .getAllAdvertisements();
+                .getAllAdvertisements(pageable);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Advertisement create(
-            @Valid @RequestBody Advertisement advertisement) {
+            @Valid @RequestBody AdvertisementRequest request) {
 
         return advertisementService
-                .saveAdvertisement(advertisement);
+                .saveAdvertisement(request);
     }
 
     @PutMapping("/{id}")
     public Advertisement update(
             @PathVariable Integer id,
-            @Valid @RequestBody Advertisement changes) {
+            @Valid @RequestBody AdvertisementRequest request) {
 
         return advertisementService
-                .updateAdvertisement(id, changes)
+                .updateAdvertisement(id, request)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Advertisement not found"));

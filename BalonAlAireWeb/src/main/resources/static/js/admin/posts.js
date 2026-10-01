@@ -1,6 +1,7 @@
 let posts = [];
 let categories = [];
 let currentPostImageUrl = null;
+let elementId="posts-message"
 
 document.addEventListener("DOMContentLoaded", () => {
     loadPosts();
@@ -32,12 +33,13 @@ async function loadPosts() {
     const tbody = document.getElementById("posts-table-body");
 
     try {
-        posts = await apiGet("/posts");
+        const page = await apiGet("/posts");
+        posts = page.content;
 
         renderPosts(posts);
 
     } catch (error) {
-        showMessage(error.message, "error");
+        showMessage(elementId, error.message, "error");
     }
 }
 
@@ -236,7 +238,7 @@ function previewPostImage(event) {
     ];
 
     if (!allowedTypes.includes(file.type)) {
-        showMessage("Solo se permiten imágenes JPG, PNG o WebP.", "error");
+        showMessage(elementId,"Solo se permiten imágenes JPG, PNG o WebP.", "error");
         event.target.value = "";
         renderPostImagePreview(currentPostImageUrl);
         return;
@@ -319,11 +321,11 @@ async function savePost(event) {
         )
     ).map(input => Number(input.value));
 
-    try {
-        const submitButton = document.querySelector(
-            "#post-form button[type='submit']"
-        );
+    const submitButton = document.querySelector(
+        "#post-form button[type='submit']"
+    );
 
+    try {
         if (submitButton) {
             submitButton.disabled = true;
             submitButton.textContent = "Guardando...";
@@ -336,38 +338,37 @@ async function savePost(event) {
             throw new Error("La noticia necesita una imagen.");
         }
 
-        const post = {
-            title: document.getElementById("post-title").value.trim(),
-            slug: document.getElementById("post-slug").value.trim(),
-            excerpt: document.getElementById("post-excerpt").value.trim(),
-            content: document.getElementById("post-content").value.trim(),
+        const postData = {
+            title:       document.getElementById("post-title").value.trim(),
+            slug:        document.getElementById("post-slug").value.trim(),
+            excerpt:     document.getElementById("post-excerpt").value.trim(),
+            content:     document.getElementById("post-content").value.trim(),
             imgUrl,
-            author: document.getElementById("post-author").value.trim(),
-            status: document.getElementById("post-status").value,
+            author:      document.getElementById("post-author").value.trim(),
+            status:      document.getElementById("post-status").value,
             publishedAt: getPublishedAt(),
-            categories: selectedCategoryIds.map(categoryId => ({
-                id: categoryId
-            }))
+            categoryIds: selectedCategoryIds
         };
 
         if (id) {
-            await apiPut(`/posts/${id}`, post);
-            showMessage("Noticia actualizada correctamente.", "success");
+            // ACTUALIZAR — PERF-02: actualizar en array local sin refetch
+            const updated = await apiPut(`/posts/${id}`, postData);
+            const idx = posts.findIndex(p => String(p.id) === String(id));
+            if (idx !== -1) posts[idx] = updated;
+            showMessage(elementId, "Noticia actualizada correctamente.", "success");
         } else {
-            await apiPost("/posts", post);
-            showMessage("Noticia creada correctamente.", "success");
+            // CREAR — PERF-02: agregar al array local sin refetch
+            const created = await apiPost("/posts", postData);
+            posts.unshift(created);
+            showMessage(elementId, "Noticia creada correctamente.", "success");
         }
 
         closePostForm();
-        await loadPosts();
+        renderPosts(posts);
 
     } catch (error) {
-        showMessage(error.message, "error");
+        showMessage(elementId, error.message, "error");
     } finally {
-        const submitButton = document.querySelector(
-            "#post-form button[type='submit']"
-        );
-
         if (submitButton) {
             submitButton.disabled = false;
             submitButton.textContent = "Guardar";
@@ -400,7 +401,7 @@ async function editPost(id) {
         openPostForm(post);
 
     } catch (error) {
-        showMessage(error.message, "error");
+        showMessage(elementId, error.message, "error");
     }
 }
 
@@ -417,27 +418,19 @@ async function deletePost(id) {
     try {
         await apiDelete(`/posts/${id}`);
 
-        showMessage("Noticia eliminada correctamente.", "success");
+        // PERF-02: filtrar el array local sin refetch
+        posts = posts.filter(p => p.id !== id);
+        renderPosts(posts);
 
-        await loadPosts();
+        showMessage(elementId, "Noticia eliminada correctamente.", "success");
 
     } catch (error) {
-        showMessage(error.message, "error");
+        showMessage(elementId, error.message, "error");
     }
 }
 
 
-function showMessage(text, type) {
-    const message = document.getElementById("posts-message");
 
-    message.textContent = text;
-    message.className = `admin-message ${type}`;
-
-    setTimeout(() => {
-        message.textContent = "";
-        message.className = "admin-message";
-    }, 4000);
-}
 
 
 function formatDate(dateString) {
@@ -462,15 +455,3 @@ function formatDateForInput(dateString) {
 }
 
 
-function escapeHtml(value) {
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
