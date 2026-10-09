@@ -95,6 +95,30 @@
                 <div class="form-row">
 
                     <div class="form-group">
+                        <label for="post-download-text">Texto del enlace de descarga</label>
+                        <input
+                            type="text"
+                            id="post-download-text"
+                            placeholder="Descargar guía"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-download-file">Archivo de descarga desde dispositivo</label>
+                        <input
+                            type="file"
+                            id="post-download-file"
+                            accept="application/pdf"
+                        >
+                        <small>PDF. Si seleccionás un archivo, se usará como descarga de la noticia.</small>
+                    </div>
+
+                </div>
+
+                <input type="hidden" id="post-download-url">
+                <div class="form-row">
+
+                    <div class="form-group">
                         <label for="post-img-url">URL de imagen</label>
                         <input
                             type="text"

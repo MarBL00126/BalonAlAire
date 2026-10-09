@@ -34,4 +34,6 @@ public class PostRequest {
         PostStatus status;
 
         LocalDateTime publishedAt;
+        String downloadText;
+        String downloadUrl;
 }

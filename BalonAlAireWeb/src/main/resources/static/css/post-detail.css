@@ -60,6 +60,7 @@
   line-height: 1.75;
   font-size: clamp(15px, 2vw, 17px);
   color: var(--text);
+  white-space: pre-line;
 }
 
 .post-detail__content p {

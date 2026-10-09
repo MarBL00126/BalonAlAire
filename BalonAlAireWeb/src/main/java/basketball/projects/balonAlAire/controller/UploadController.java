@@ -20,12 +20,14 @@ import basketball.projects.balonAlAire.service.FileStorageService;
 @RequestMapping("/api/uploads")
 public class UploadController {
 
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+    private static final long MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
+    private static final long MAX_PDF_SIZE = 100 * 1024 * 1024; // 100 MB
     private final FileStorageService fileStorageService;
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             MediaType.IMAGE_JPEG_VALUE,
             MediaType.IMAGE_PNG_VALUE,
-            "image/webp");
+            "image/webp",
+            MediaType.APPLICATION_PDF_VALUE);
     public  UploadController(FileStorageService fileStorageService){
         this.fileStorageService=fileStorageService;
     }
@@ -43,12 +45,6 @@ public class UploadController {
                 "No se recibió ningún archivo"
             );
         }
-        if (file.getSize()>MAX_FILE_SIZE){
-                throw new ResponseStatusException(
-                    HttpStatus.CONTENT_TOO_LARGE,
-                    "La imagen no puede superar los 5 MB"
-            );
-        }
         String contentType = file.getContentType();
 
         if (contentType == null ||
@@ -56,7 +52,20 @@ public class UploadController {
 
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Solo se permiten imágenes JPG, PNG o WebP"
+                    "Solo se permiten imágenes JPG, PNG, WebP o archivos PDF"
+            );
+        }
+
+        long maxFileSize = MediaType.APPLICATION_PDF_VALUE.equals(contentType)
+                ? MAX_PDF_SIZE
+                : MAX_IMAGE_SIZE;
+
+        if (file.getSize() > maxFileSize) {
+                throw new ResponseStatusException(
+                    HttpStatus.CONTENT_TOO_LARGE,
+                    MediaType.APPLICATION_PDF_VALUE.equals(contentType)
+                            ? "El PDF no puede superar los 100 MB"
+                            : "La imagen no puede superar los 5 MB"
             );
         }
     }

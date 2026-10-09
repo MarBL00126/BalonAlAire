@@ -1,0 +1,3 @@
+ALTER TABLE posts
+ADD COLUMN download_text VARCHAR(255),
+ADD COLUMN download_url VARCHAR(1000);

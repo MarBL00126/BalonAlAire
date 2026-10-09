@@ -1,6 +1,7 @@
 let posts = [];
 let categories = [];
 let currentPostImageUrl = null;
+let currentDownloadUrl = null;
 let elementId="posts-message"
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -181,7 +182,11 @@ function openPostForm(post = null) {
         document.getElementById("post-id").value = "";
 
         document.getElementById("post-status").value = "DRAFT";
+        document.getElementById("post-download-text").value = "";
+        document.getElementById("post-download-url").value = "";
+        document.getElementById("post-download-file").value = "";
         currentPostImageUrl = null;
+        currentDownloadUrl = null;
         document.getElementById("post-image-preview").innerHTML = "";
 
         renderCategoryOptions([]);
@@ -194,10 +199,14 @@ function openPostForm(post = null) {
     document.getElementById("post-slug").value = post.slug || "";
     document.getElementById("post-excerpt").value = post.excerpt || "";
     document.getElementById("post-content").value = post.content || "";
+    document.getElementById("post-download-text").value = post.downloadText || "";
+    document.getElementById("post-download-url").value = post.downloadUrl || "";
+    document.getElementById("post-download-file").value = "";
     document.getElementById("post-img-url").value = post.imgUrl || "";
     document.getElementById("post-author").value = post.author || "";
     document.getElementById("post-status").value = post.status || "DRAFT";
     currentPostImageUrl = post.imgUrl || null;
+    currentDownloadUrl = post.downloadUrl || null;
     renderPostImagePreview(currentPostImageUrl);
 
     if (post.publishedAt) {
@@ -307,12 +316,57 @@ async function uploadPostImage(file) {
     return data.url;
 }
 
+async function uploadDownloadFile(file) {
+    if (!file) {
+        return null;
+    }
+
+    if (file.type !== "application/pdf") {
+        throw new Error("Solo se permiten archivos PDF para descarga.");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/uploads", {
+        method: "POST",
+        body: formData
+    });
+
+    if (response.status === 401 || response.status === 403) {
+        window.location.href = "/admin/login";
+        return null;
+    }
+
+    if (!response.ok) {
+        let message = `Error subiendo PDF (${response.status})`;
+
+        try {
+            const errorData = await response.json();
+            message = errorData.message || errorData.error || message;
+        } catch {
+            // La respuesta no era JSON.
+        }
+
+        throw new Error(message);
+    }
+
+    const data = await response.json();
+
+    if (!data.url) {
+        throw new Error("El servidor no devolvió la URL del PDF.");
+    }
+
+    return data.url;
+}
+
 
 async function savePost(event) {
     event.preventDefault();
 
     const id = document.getElementById("post-id").value;
     const file = document.getElementById("post-image").files[0];
+    const downloadFile = document.getElementById("post-download-file").files[0];
     const manualImageUrl = document.getElementById("post-img-url").value.trim();
 
     const selectedCategoryIds = Array.from(
@@ -333,6 +387,11 @@ async function savePost(event) {
 
         const uploadedImageUrl = await uploadPostImage(file);
         const imgUrl = uploadedImageUrl || manualImageUrl || currentPostImageUrl;
+        const uploadedDownloadUrl = await uploadDownloadFile(downloadFile);
+        const downloadUrl =
+            uploadedDownloadUrl ||
+            document.getElementById("post-download-url").value.trim() ||
+            currentDownloadUrl;
 
         if (!imgUrl) {
             throw new Error("La noticia necesita una imagen.");
@@ -347,7 +406,9 @@ async function savePost(event) {
             author:      document.getElementById("post-author").value.trim(),
             status:      document.getElementById("post-status").value,
             publishedAt: getPublishedAt(),
-            categoryIds: selectedCategoryIds
+            categoryIds: selectedCategoryIds,
+            downloadText: document.getElementById("post-download-text").value.trim(),
+            downloadUrl
         };
 
         if (id) {

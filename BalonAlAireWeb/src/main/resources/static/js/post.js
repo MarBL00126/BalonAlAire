@@ -62,6 +62,20 @@ function renderPost(post, container) {
     // Use innerHTML to render HTML content; falls back to text if plain text stored
     content.innerHTML = post.content;
     container.appendChild(content);
+
+    if (post.downloadUrl) {
+        const download = document.createElement("p");
+        const link = document.createElement("a");
+
+        link.className = "btn btn--primary";
+        link.href = post.downloadUrl;
+        link.target = "_blank";
+        link.download = "";
+        link.textContent = post.downloadText || "Descargar";
+
+        download.appendChild(link);
+        container.appendChild(download);
+    }
 }
 
 async function loadRelated(currentPost) {

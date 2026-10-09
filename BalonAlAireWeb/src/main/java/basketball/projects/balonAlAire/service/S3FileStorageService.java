@@ -22,7 +22,8 @@ public class S3FileStorageService implements FileStorageService {
             ".jpg",
             ".jpeg",
             ".png",
-            ".webp"
+            ".webp",
+            ".pdf"
     );
 
     private final S3Client s3Client;
@@ -45,7 +46,9 @@ public class S3FileStorageService implements FileStorageService {
 
         String filename = UUID.randomUUID() + extension;
 
-        String key = "ads/" + filename;
+        String key = ".pdf".equals(extension)
+                ? "downloads/" + filename
+                : "ads/" + filename;
 
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -70,7 +73,7 @@ public class S3FileStorageService implements FileStorageService {
 
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo leer la imagen",
+                    "No se pudo leer el archivo",
                     e
             );
 
@@ -78,7 +81,7 @@ public class S3FileStorageService implements FileStorageService {
 
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo guardar la imagen",
+                    "No se pudo guardar el archivo",
                     e
             );
         }
@@ -103,7 +106,7 @@ public class S3FileStorageService implements FileStorageService {
 
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Extensión de imagen no permitida"
+                    "Extensión de archivo no permitida"
             );
         }
 

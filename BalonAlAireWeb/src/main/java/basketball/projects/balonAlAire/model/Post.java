@@ -51,4 +51,8 @@ public class Post {
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    @Column(name = "download_text")
+    private String downloadText;
+    @Column(name = "download_url")
+    private String downloadUrl;
 }

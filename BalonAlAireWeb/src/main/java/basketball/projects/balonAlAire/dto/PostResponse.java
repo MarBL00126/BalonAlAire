@@ -20,4 +20,6 @@ public class PostResponse {
     private PostStatus status;
     private LocalDateTime publishedAt;
     private List<CategoryResponse> categories;
+    private String downloadText;
+    private String downloadUrl;
 }

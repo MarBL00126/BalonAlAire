@@ -79,7 +79,8 @@ public class PostService {
 
         post.setCreatedAt(now);
         post.setUpdatedAt(now);
-
+        post.setDownloadText(request.getDownloadText());
+        post.setDownloadUrl(request.getDownloadUrl());
         return toResponse(postRepository.save(post));
     }
 
@@ -100,7 +101,8 @@ public class PostService {
         existing.setPublishedAt(request.getPublishedAt());
         existing.setCategories(categories);
         existing.setUpdatedAt(LocalDateTime.now());
-
+        existing.setDownloadText(request.getDownloadText());
+        existing.setDownloadUrl(request.getDownloadUrl());
         return toResponse(postRepository.save(existing));
     }
 
@@ -116,7 +118,18 @@ public class PostService {
     private PostResponse toResponse(Post post) {
         List<CategoryResponse> categories = post.getCategories()
                 .stream().map(category -> new CategoryResponse(category.getName(), category.getSlug())).toList();
-        return new PostResponse(post.getId(), post.getTitle(), post.getSlug(), post.getExcerpt(),
-                post.getContent(), post.getImgUrl(), post.getAuthor(), post.getStatus(), post.getPublishedAt(), categories);
+        return new PostResponse(
+                post.getId(),
+                post.getTitle(),
+                post.getSlug(),
+                post.getExcerpt(),
+                post.getContent(),
+                post.getImgUrl(),
+                post.getAuthor(),
+                post.getStatus(),
+                post.getPublishedAt(),
+                categories,
+                post.getDownloadText(),
+                post.getDownloadUrl());
     }
 }
