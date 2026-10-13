@@ -1,7 +1,5 @@
 package basketball.projects.balonAlAire.config;
 
-import java.util.LinkedHashMap;
-
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +19,6 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.header.HeaderWriterFilter;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import basketball.projects.balonAlAire.model.Role;
@@ -149,11 +146,11 @@ public class SecurityConfig {
         }
 
         private static AuthenticationEntryPoint authenticationEntryPoint() {
-                LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
-                entryPoints.put(request -> request.getRequestURI().startsWith("/api/"),
-                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-                DelegatingAuthenticationEntryPoint delegating = new DelegatingAuthenticationEntryPoint(entryPoints);
-                delegating.setDefaultEntryPoint(new LoginUrlAuthenticationEntryPoint("/admin/login"));
-                return delegating;
+                return DelegatingAuthenticationEntryPoint.builder()
+                                .addEntryPointFor(
+                                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                                                request -> request.getRequestURI().startsWith("/api/"))
+                                .defaultEntryPoint(new LoginUrlAuthenticationEntryPoint("/admin/login"))
+                                .build();
         }
 }

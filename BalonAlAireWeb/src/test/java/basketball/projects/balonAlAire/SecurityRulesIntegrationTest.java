@@ -207,6 +207,13 @@ class SecurityRulesIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void adminPagesRedirectAnonymousUsersToLogin() throws Exception {
+        mockMvc.perform(get("/admin/dashboard.html"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/login"));
+    }
+
+    @Test
     @WithMockUser(roles = "ADMIN")
     void adminSeesDraftsAndScheduledPosts() throws Exception {
         mockMvc.perform(get("/api/admin/posts").param("size", "200"))
