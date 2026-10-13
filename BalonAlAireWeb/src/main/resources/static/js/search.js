@@ -1,40 +1,3 @@
-// kept independent from news.js so this page doesn't trigger its auto-render on .news-grid
-function createSearchResultCard(post) {
-    const card = document.createElement("article");
-    card.className = "news-card";
-
-    const link = document.createElement("a");
-    link.href = `/noticia?slug=${encodeURIComponent(post.slug)}`;
-
-    const image = document.createElement("img");
-    image.className = "news-card__image";
-    image.src = post.imgUrl || "/assets/images/placeholder.jpg";
-    image.alt = post.title;
-    link.appendChild(image);
-
-    const body = document.createElement("div");
-    body.className = "news-card__body";
-
-    const title = document.createElement("h3");
-    title.className = "news-card__title";
-    title.textContent = post.title;
-    body.appendChild(title);
-
-    const excerpt = document.createElement("p");
-    excerpt.className = "news-card__excerpt";
-    excerpt.textContent = post.excerpt || "";
-    body.appendChild(excerpt);
-
-    link.appendChild(body);
-    card.appendChild(link);
-    return card;
-}
-
-function matchesQuery(post, query) {
-    const haystack = `${post.title} ${post.excerpt || ""}`.toLowerCase();
-    return haystack.includes(query.toLowerCase());
-}
-
 async function runSearch(query) {
     const resultsGrid = document.getElementById("searchResults");
     const status = document.getElementById("searchStatus");
@@ -45,14 +8,15 @@ async function runSearch(query) {
         return;
     }
 
+    // El filtrado lo hace el servidor (búsqueda de texto completo)
     const data = await fetchJSON(`/posts?search=${encodeURIComponent(query)}`);
-    const matches = data.content ?? data;   // soporta Page<> y array plano
+    const matches = data.content;
 
     status.textContent = matches.length
         ? `${matches.length} resultado(s) para "${query}"`
         : `No se encontraron noticias para "${query}"`;
 
-    matches.forEach((post) => resultsGrid.appendChild(createSearchResultCard(post)));
+    matches.forEach((post) => resultsGrid.appendChild(createNewsCard(post, { parts: ["title", "excerpt"] })));
 }
 
 document.addEventListener("DOMContentLoaded", () => {

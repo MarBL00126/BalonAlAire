@@ -33,8 +33,5 @@ build/
 ### VS Code ###
 .vscode/
 
-
-###V1__create_users.sql
-###V2__create_categories.sql
-###V3__create_posts.sql
-###V4__create_advertisements.sql
+### Archivos subidos (el almacenamiento real es S3; el disco de Railway es efímero) ###
+uploads/

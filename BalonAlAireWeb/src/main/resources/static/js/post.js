@@ -21,15 +21,17 @@ function renderPost(post, container) {
     document.title = `${post.title} - BALONALAIRE`;
     container.innerHTML = "";
 
-    // Categoría badge
     if (post.categories && post.categories.length > 0) {
-        const catEl = document.createElement("p");
+        const catEl = document.createElement("div");
         catEl.className = "post-detail__category";
-        const cat = post.categories[0];
-        const catLink = document.createElement("a");
-        catLink.href = `/categorias/${cat.slug}`;
-        catLink.textContent = cat.name;
-        catEl.appendChild(catLink);
+
+        post.categories.forEach((cat) => {
+            const catLink = document.createElement("a");
+            catLink.href = `/categorias/${cat.slug}`;
+            catLink.textContent = cat.name;
+            catEl.appendChild(catLink);
+        });
+
         container.appendChild(catEl);
     }
 
@@ -49,7 +51,7 @@ function renderPost(post, container) {
     meta.textContent = [post.author, publishedDate].filter(Boolean).join(" · ");
     container.appendChild(meta);
 
-    if (post.imgUrl) {
+    if (post.imgUrl && isSafeUrl(post.imgUrl)) {
         const image = document.createElement("img");
         image.className = "post-detail__image";
         image.src = post.imgUrl;
@@ -59,22 +61,33 @@ function renderPost(post, container) {
 
     const content = document.createElement("div");
     content.className = "post-detail__content";
-    // Use innerHTML to render HTML content; falls back to text if plain text stored
-    content.innerHTML = post.content;
+    // El HTML ya se sanea en el servidor; DOMPurify es una segunda barrera en el navegador
+    content.innerHTML = DOMPurify.sanitize(post.content || "");
     container.appendChild(content);
 
-    if (post.downloadUrl) {
+    if (post.downloadUrl && isSafeUrl(post.downloadUrl)) {
         const download = document.createElement("p");
         const link = document.createElement("a");
 
         link.className = "btn btn--primary";
         link.href = post.downloadUrl;
         link.target = "_blank";
+        link.rel = "noopener noreferrer";
         link.download = "";
         link.textContent = post.downloadText || "Descargar";
 
         download.appendChild(link);
         container.appendChild(download);
+    }
+}
+
+// Solo http(s) o rutas relativas al sitio; bloquea javascript:, data:, etc.
+function isSafeUrl(value) {
+    try {
+        const url = new URL(value, window.location.origin);
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+        return false;
     }
 }
 
@@ -84,24 +97,12 @@ async function loadRelated(currentPost) {
     if (!relatedSection || !relatedGrid) return;
 
     try {
-        let related = [];
-
-        // Try fetching by first category
-        if (currentPost.categories && currentPost.categories.length > 0) {
-            const catSlug = currentPost.categories[0].slug;
-            const catPosts = await fetchJSON(`/categories/${encodeURIComponent(catSlug)}/posts`);
-            related = catPosts.filter((p) => p.slug !== currentPost.slug).slice(0, 3);
-        }
-
-        // Fallback: latest posts
-        if (related.length === 0) {
-            const allPosts = await fetchJSON("/posts");
-            related = allPosts.filter((p) => p.slug !== currentPost.slug).slice(0, 3);
-        }
+        // El servidor devuelve las 3 más cercanas (misma categoría, o las últimas si no hay)
+        const related = await fetchJSON(`/posts/${encodeURIComponent(currentPost.slug)}/related?limit=3`);
 
         if (related.length > 0) {
             related.forEach((post) => {
-                relatedGrid.appendChild(createRelatedCard(post));
+                relatedGrid.appendChild(createNewsCard(post, { parts: ["category", "title", "date"] }));
             });
             relatedSection.style.display = "";
         }
@@ -109,46 +110,6 @@ async function loadRelated(currentPost) {
         console.error("No se pudieron cargar noticias relacionadas", error);
     }
 }
-
-function createRelatedCard(post) {
-    const card = document.createElement("article");
-    card.className = "news-card";
-
-    const link = document.createElement("a");
-    link.href = `/noticia?slug=${encodeURIComponent(post.slug)}`;
-
-    const image = document.createElement("img");
-    image.className = "news-card__image";
-    image.src = post.imgUrl || "/assets/images/placeholder.jpg";
-    image.alt = post.title;
-    link.appendChild(image);
-
-    const body = document.createElement("div");
-    body.className = "news-card__body";
-
-    const category = document.createElement("p");
-    category.className = "news-card__category";
-    category.textContent = post.categories?.[0]?.name || "";
-    body.appendChild(category);
-
-    const title = document.createElement("h3");
-    title.className = "news-card__title";
-    title.textContent = post.title;
-    body.appendChild(title);
-
-    const meta = document.createElement("p");
-    meta.className = "news-card__meta";
-    const date = post.publishedAt
-        ? new Date(post.publishedAt).toLocaleDateString("es-AR")
-        : "";
-    meta.textContent = date;
-    body.appendChild(meta);
-
-    link.appendChild(body);
-    card.appendChild(link);
-    return card;
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     loadPost();
 });

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import basketball.projects.balonAlAire.model.SocialLink;
 
 @Repository
-public interface SocialLinkRepository extends JpaRepository<SocialLink, Integer> {
+public interface SocialLinkRepository extends JpaRepository<SocialLink, Long> {
     List<SocialLink> findAllByActiveTrue();
 }

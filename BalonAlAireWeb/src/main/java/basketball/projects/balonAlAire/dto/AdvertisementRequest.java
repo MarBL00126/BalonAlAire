@@ -1,19 +1,28 @@
 package basketball.projects.balonAlAire.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-@Data 
-public class AdvertisementRequest {
-    @NotBlank(message = "Name is required")
-    private String name;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
-    @NotBlank(message = "Image URL is required")
-    private String imageUrl;
+public record AdvertisementRequest(
+        @NotBlank(message = "El nombre es obligatorio")
+        @Size(max = 150, message = "El nombre no puede superar los 150 caracteres")
+        String name,
 
-    @NotBlank(message = "Link URL is required")
-    private String linkUrl;
+        @NotBlank(message = "La imagen es obligatoria")
+        @Pattern(regexp = Urls.SITE_OR_HTTP, message = Urls.SITE_OR_HTTP_MESSAGE)
+        String imageUrl,
 
-    private String position;
+        @NotBlank(message = "El enlace es obligatorio")
+        @Pattern(regexp = Urls.HTTP_ONLY, message = Urls.HTTP_ONLY_MESSAGE)
+        String linkUrl,
 
-    private boolean active = true;
+        @Size(max = 100, message = "La posición no puede superar los 100 caracteres")
+        String position,
+
+        Boolean active) {
+
+    public boolean isActiveOrDefault() {
+        return active == null || active;
+    }
 }

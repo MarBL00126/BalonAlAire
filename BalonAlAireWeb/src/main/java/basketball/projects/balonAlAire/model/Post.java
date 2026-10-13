@@ -17,42 +17,67 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "posts")
-@Data
+@Getter
+@Setter
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private Long id;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     @JoinTable(name = "post_categories", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
+
     @Column(nullable = false)
     private String title;
+
     @Column(nullable = false)
     private String slug;
+
     @Column(nullable = false)
     private String excerpt;
+
     @Column(nullable = false)
     private String content;
+
     @Column(name = "img_url", nullable = false)
     private String imgUrl;
+
     @Column(nullable = false)
     private String author;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostStatus status=PostStatus.DRAFT;
+    private PostStatus status = PostStatus.DRAFT;
+
     @Column(name = "published_at")
     private LocalDateTime publishedAt;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
     @Column(name = "download_text")
     private String downloadText;
+
     @Column(name = "download_url")
     private String downloadUrl;
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof Post that && id != null && id.equals(that.getId()));
+    }
+
+    @Override
+    public int hashCode() {
+        return Post.class.hashCode();
+    }
 }

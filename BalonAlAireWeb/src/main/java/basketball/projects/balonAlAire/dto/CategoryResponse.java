@@ -1,11 +1,10 @@
 package basketball.projects.balonAlAire.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import basketball.projects.balonAlAire.model.Category;
 
-@Data
-@AllArgsConstructor
-public class CategoryResponse {
-    private String name;
-    private String slug;
+public record CategoryResponse(Long id, String name, String slug) {
+
+    public static CategoryResponse from(Category category) {
+        return new CategoryResponse(category.getId(), category.getName(), category.getSlug());
+    }
 }

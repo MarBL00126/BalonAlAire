@@ -1,0 +1,18 @@
+# Desarrollo local: SPRING_PROFILES_ACTIVE=dev
+spring:
+  datasource:
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:balon_al_aire_db}
+    username: ${PGUSER:postgres}
+
+app:
+  public-url: ${APP_PUBLIC_URL:http://localhost:8080}
+  # Orígenes típicos de un front aparte en desarrollo (no usar en producción: se permiten credenciales)
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:8080,http://localhost:3000,http://localhost:5173,http://localhost:5500}
+
+# En http://localhost no hay HTTPS
+server:
+  servlet:
+    session:
+      cookie:
+        secure: false

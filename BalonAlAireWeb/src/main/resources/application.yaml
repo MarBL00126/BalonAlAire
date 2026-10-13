@@ -1,3 +1,7 @@
+# Configuración común. Los valores de cada entorno viven en variables de entorno / .env y en los perfiles:
+#   - application-dev.yaml:  valores cómodos para desarrollo local (SPRING_PROFILES_ACTIVE=dev)
+#   - application-prod.yaml: cookie segura y logs estructurados (SPRING_PROFILES_ACTIVE=prod)
+# Acá no hay URLs ni credenciales por defecto: si falta una variable obligatoria, el arranque falla indicando cuál.
 spring:
   application:
     name: balonAlAire
@@ -15,30 +19,69 @@ spring:
           starttls:
             enable: ${MAIL_SMTP_STARTTLS_ENABLE:true}
   datasource:
-    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:balon_al_aire_db}
-    username: ${PGUSER:postgres}
+    url: jdbc:postgresql://${PGHOST}:${PGPORT:5432}/${PGDATABASE}
+    username: ${PGUSER}
     password: ${PGPASSWORD}
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: false
+    # Los DTO se arman dentro de transacciones de servicio; no se mantiene la sesión abierta durante la vista
+    open-in-view: false
 
   flyway:
     validate-on-migrate: true
 
+  # Caché local por instancia: con más de una réplica, un cambio hecho en un nodo tarda hasta
+  # expireAfterWrite (10m) en verse en los demás. Es consistencia eventual aceptada; si hiciera falta
+  # consistencia inmediata, pasar a una caché compartida (Redis).
   cache:
     type: caffeine
     caffeine:
-      spec: maximumSize=500,expireAfterWrite=10m
+      spec: maximumSize=500,expireAfterWrite=10m,recordStats
     cache-names:
       - categories
       - social-links
+      - social-links-active
       - settings
+
+server:
+  servlet:
+    session:
+      timeout: ${SESSION_TIMEOUT:8h}
+      cookie:
+        max-age: ${SESSION_COOKIE_MAX_AGE:8h}
+        http-only: true
+        same-site: strict
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
 app:
-  public-url: ${APP_PUBLIC_URL:https://balonalaire-production.up.railway.app}
+  public-url: ${APP_PUBLIC_URL}
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:${app.public-url}}
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:}
+    email: ${ADMIN_EMAIL:}
+  tinymce:
+    api-key: ${TINYMCE_API_KEY:no-api-key}
   mail:
     from: ${MAIL_FROM:${MAIL_USERNAME:}}
+
+# Si STORAGE_ENDPOINT está vacío se guardan los archivos en disco local (solo desarrollo)
 storage:
   endpoint: ${STORAGE_ENDPOINT:}
   public-url: ${STORAGE_PUBLIC_URL:}
@@ -47,3 +90,4 @@ storage:
   region: ${STORAGE_REGION:auto}
   bucket: ${STORAGE_BUCKET:}
   path-style: ${STORAGE_PATH_STYLE:true}
+  local-dir: ${STORAGE_LOCAL_DIR:uploads}

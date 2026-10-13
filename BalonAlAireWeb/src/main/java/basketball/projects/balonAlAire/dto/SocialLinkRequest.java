@@ -1,13 +1,20 @@
 package basketball.projects.balonAlAire.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-@Data 
-public class SocialLinkRequest {
-    @NotBlank(message = "Platform is required")
-    private String platform;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
-    private String linkUrl;
+public record SocialLinkRequest(
+        @NotBlank(message = "La plataforma es obligatoria")
+        @Size(max = 50, message = "La plataforma no puede superar los 50 caracteres")
+        String platform,
 
-    private boolean active = true;
+        @Pattern(regexp = Urls.HTTP_ONLY, message = Urls.HTTP_ONLY_MESSAGE)
+        String linkUrl,
+
+        Boolean active) {
+
+    public boolean isActiveOrDefault() {
+        return active == null || active;
+    }
 }

@@ -6,7 +6,7 @@
 async function applySiteSettings() {
     let settings;
     try {
-        settings = await fetchJSON("/settings");
+        settings = await fetchJSONCached("/settings");
     } catch (error) {
         console.error("No se pudo cargar la configuración del sitio", error);
         return;

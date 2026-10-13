@@ -24,7 +24,7 @@ async function loadSettings() {
 
     try {
 
-        const settings = await apiGet("/settings");
+        const settings = await apiGet("/admin/settings");
 
         if (!settings) {
             return;
@@ -87,7 +87,7 @@ async function saveSettings(event) {
     try {
 
         await apiPut(
-            "/settings",
+            "/admin/settings",
             settings
         );
 
@@ -166,7 +166,7 @@ async function loadSocialLinks() {
     try {
 
         socialLinks =
-            await apiGet("/social-links");
+            await apiGet("/admin/social-links");
 
         renderSocialLinks(
             socialLinks
@@ -340,14 +340,14 @@ async function saveSocialNetwork(network) {
         if (existing) {
 
             await apiPut(
-                `/social-links/${existing.id}`,
+                `/admin/social-links/${existing.id}`,
                 data
             );
 
         } else {
 
             await apiPost(
-                "/social-links",
+                "/admin/social-links",
                 data
             );
         }

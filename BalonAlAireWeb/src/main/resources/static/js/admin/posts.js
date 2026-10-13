@@ -5,6 +5,7 @@ let currentDownloadUrl = null;
 let elementId="posts-message"
 
 document.addEventListener("DOMContentLoaded", () => {
+    initTinyEditor();
     loadPosts();
     loadCategories();
 
@@ -29,12 +30,88 @@ document.addEventListener("DOMContentLoaded", () => {
         .addEventListener("change", previewPostImage);
 });
 
+async function initTinyEditor() {
+    await loadTinyMceScript();
+
+    if (!window.tinymce) {
+        console.warn("TinyMCE no está disponible. Se usará el textarea original.");
+        return;
+    }
+
+    tinymce.init({
+        selector: "#post-content",
+        height: 360,
+        menubar: false,
+        branding: false,
+        promotion: false,
+        language: "es",
+        plugins: "autolink lists link table code wordcount",
+        toolbar: "undo redo | blocks | bold italic underline | bullist numlist | link table | removeformat | code",
+        block_formats: "Párrafo=p; Título 2=h2; Título 3=h3",
+        content_style: "body { font-family: Arial, sans-serif; font-size: 16px; line-height: 1.65; }",
+        setup: (editor) => {
+            editor.on("change keyup undo redo", () => {
+                editor.save();
+            });
+        }
+    });
+}
+
+async function loadTinyMceScript() {
+    if (window.tinymce) {
+        return;
+    }
+
+    try {
+        const config = await apiGet("/admin/config/editor");
+        const apiKey = encodeURIComponent(config.tinymceApiKey || "no-api-key");
+
+        await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = `https://cdn.tiny.cloud/1/${apiKey}/tinymce/8/tinymce.min.js`;
+            script.referrerPolicy = "origin";
+            script.crossOrigin = "anonymous";
+            script.onload = resolve;
+            script.onerror = () => reject(new Error("No se pudo cargar TinyMCE."));
+            document.head.appendChild(script);
+        });
+    } catch (error) {
+        console.warn(error.message || "No se pudo cargar la configuración del editor.");
+    }
+}
+
+function getPostContent() {
+    if (window.tinymce) {
+        const editor = tinymce.get("post-content");
+        if (editor) {
+            editor.save();
+            return editor.getContent().trim();
+        }
+    }
+
+    return document.getElementById("post-content").value.trim();
+}
+
+function setPostContent(value) {
+    const content = value || "";
+    const textarea = document.getElementById("post-content");
+    textarea.value = content;
+
+    if (window.tinymce) {
+        const editor = tinymce.get("post-content");
+        if (editor) {
+            editor.setContent(content);
+            editor.save();
+        }
+    }
+}
+
 
 async function loadPosts() {
     const tbody = document.getElementById("posts-table-body");
 
     try {
-        const page = await apiGet("/posts");
+        const page = await apiGet("/admin/posts");
         posts = page.content;
 
         renderPosts(posts);
@@ -47,7 +124,7 @@ async function loadPosts() {
 
 async function loadCategories() {
     try {
-        categories = await apiGet("/categories");
+        categories = await apiGet("/admin/categories");
         renderCategoryOptions();
     } catch (error) {
         console.error("Error cargando categorías:", error);
@@ -180,6 +257,7 @@ function openPostForm(post = null) {
         form.reset();
 
         document.getElementById("post-id").value = "";
+        setPostContent("");
 
         document.getElementById("post-status").value = "DRAFT";
         document.getElementById("post-download-text").value = "";
@@ -198,7 +276,7 @@ function openPostForm(post = null) {
     document.getElementById("post-title").value = post.title || "";
     document.getElementById("post-slug").value = post.slug || "";
     document.getElementById("post-excerpt").value = post.excerpt || "";
-    document.getElementById("post-content").value = post.content || "";
+    setPostContent(post.content || "");
     document.getElementById("post-download-text").value = post.downloadText || "";
     document.getElementById("post-download-url").value = post.downloadUrl || "";
     document.getElementById("post-download-file").value = "";
@@ -277,93 +355,21 @@ function renderPostImagePreview(imageUrl) {
 }
 
 async function uploadPostImage(file) {
-    if (!file) {
-        return null;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("/api/uploads", {
-        method: "POST",
-        body: formData
-    });
-
-    if (response.status === 401 || response.status === 403) {
-        window.location.href = "/admin/login";
-        return null;
-    }
-
-    if (!response.ok) {
-        let message = `Error subiendo imagen (${response.status})`;
-
-        try {
-            const errorData = await response.json();
-            message = errorData.message || errorData.error || message;
-        } catch {
-            // La respuesta no era JSON.
-        }
-
-        throw new Error(message);
-    }
-
-    const data = await response.json();
-
-    if (!data.url) {
-        throw new Error("El servidor no devolvió la URL de la imagen.");
-    }
-
-    return data.url;
+    return uploadFile(file);
 }
 
 async function uploadDownloadFile(file) {
-    if (!file) {
-        return null;
-    }
-
-    if (file.type !== "application/pdf") {
+    if (file && file.type !== "application/pdf") {
         throw new Error("Solo se permiten archivos PDF para descarga.");
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("/api/uploads", {
-        method: "POST",
-        body: formData
-    });
-
-    if (response.status === 401 || response.status === 403) {
-        window.location.href = "/admin/login";
-        return null;
-    }
-
-    if (!response.ok) {
-        let message = `Error subiendo PDF (${response.status})`;
-
-        try {
-            const errorData = await response.json();
-            message = errorData.message || errorData.error || message;
-        } catch {
-            // La respuesta no era JSON.
-        }
-
-        throw new Error(message);
-    }
-
-    const data = await response.json();
-
-    if (!data.url) {
-        throw new Error("El servidor no devolvió la URL del PDF.");
-    }
-
-    return data.url;
+    return uploadFile(file);
 }
-
 
 async function savePost(event) {
     event.preventDefault();
 
+    const content = getPostContent();
     const id = document.getElementById("post-id").value;
     const file = document.getElementById("post-image").files[0];
     const downloadFile = document.getElementById("post-download-file").files[0];
@@ -397,11 +403,15 @@ async function savePost(event) {
             throw new Error("La noticia necesita una imagen.");
         }
 
+        if (!content) {
+            throw new Error("La noticia necesita contenido.");
+        }
+
         const postData = {
             title:       document.getElementById("post-title").value.trim(),
             slug:        document.getElementById("post-slug").value.trim(),
             excerpt:     document.getElementById("post-excerpt").value.trim(),
-            content:     document.getElementById("post-content").value.trim(),
+            content,
             imgUrl,
             author:      document.getElementById("post-author").value.trim(),
             status:      document.getElementById("post-status").value,
@@ -413,13 +423,13 @@ async function savePost(event) {
 
         if (id) {
             // ACTUALIZAR — PERF-02: actualizar en array local sin refetch
-            const updated = await apiPut(`/posts/${id}`, postData);
+            const updated = await apiPut(`/admin/posts/${id}`, postData);
             const idx = posts.findIndex(p => String(p.id) === String(id));
             if (idx !== -1) posts[idx] = updated;
             showMessage(elementId, "Noticia actualizada correctamente.", "success");
         } else {
             // CREAR — PERF-02: agregar al array local sin refetch
-            const created = await apiPost("/posts", postData);
+            const created = await apiPost("/admin/posts", postData);
             posts.unshift(created);
             showMessage(elementId, "Noticia creada correctamente.", "success");
         }
@@ -453,7 +463,8 @@ function getPublishedAt() {
 
 async function editPost(id) {
     try {
-        const post = posts.find(post => post.id === id);
+        // La tabla solo trae resúmenes: el contenido completo se pide al editar
+        const post = await apiGet(`/admin/posts/${id}`);
 
         if (!post) {
             throw new Error("No se encontró la noticia.");
@@ -466,7 +477,6 @@ async function editPost(id) {
     }
 }
 
-
 async function deletePost(id) {
     const confirmed = confirm(
         "¿Seguro que querés eliminar esta noticia?"
@@ -477,7 +487,7 @@ async function deletePost(id) {
     }
 
     try {
-        await apiDelete(`/posts/${id}`);
+        await apiDelete(`/admin/posts/${id}`);
 
         // PERF-02: filtrar el array local sin refetch
         posts = posts.filter(p => p.id !== id);

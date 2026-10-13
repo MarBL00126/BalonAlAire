@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="/css/advertisement.css">
         <link rel="stylesheet" href="/css/footer.css">
     </head>
-    <body>
+    <body class="single-post-page">
     <header class="site-header">
         <div class="container header-container">
             <a href="/" class="site-logo">
@@ -41,7 +41,6 @@
             <div class="menu-overlay" id="menuOverlay"></div>
 
             <div class="header-actions">
-                <button class="search-button" id="searchButton" aria-label="Buscar">🔍</button>
                 <a href="/admin/login" class="btn-admin" aria-label="Panel de administración">Admin</a>
             </div>
         </div>
@@ -127,7 +126,10 @@
         </div>
     </footer>
 
+    <script src="/js/vendor/purify.min.js"></script>
+    <script src="/js/api-base.js"></script>
     <script src="/js/api.js"></script>
+    <script src="/js/components/newsCard.js"></script>
     <script src="/js/site-settings.js"></script>
     <script src="/js/header.js"></script>
     <script src="/js/sidebar.js"></script>

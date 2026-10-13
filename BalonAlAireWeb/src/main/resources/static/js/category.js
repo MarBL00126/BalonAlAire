@@ -1,95 +1,86 @@
-function getCategorySlug(){
-    const path=window.location.pathname;
-    const parts=path.split("/").filter(Boolean);
-    return parts[parts.length-1];
+const CATEGORY_PAGE_SIZE = 12;
+
+function getCategorySlug() {
+    const path = window.location.pathname;
+    const parts = path.split("/").filter(Boolean);
+    return parts[parts.length - 1];
 }
-function createCategoryCard(post){
-    const card=document.createElement("article");
-    card.className="news-card";
-    
-    const link=document.createElement("a");
-    link.href= `/noticia?slug=${encodeURIComponent(post.slug)}`;
 
-    const image=document.createElement("img");
-    image.className="news-card__image";
-    image.src=post.imgUrl ||  "/assets/images/placeholder.jpg";
-    image.alt=post.title
+function createLoadMoreButton(container, onClick) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn btn--primary";
+    button.textContent = "Cargar más noticias";
+    button.addEventListener("click", onClick);
 
-    link.appendChild(image)
-
-    const body=document.createElement("div");
-    body.className= "news-card__body";
-
-    const category=document.createElement("p");
-    category.className= "news-card__category";
-    category.textContent=post.categories?.[0]?.name || "";
-    
-    body.appendChild(category);
-
-    const title = document.createElement("h2");
-    title.className = "news-card__title";
-    title.textContent = post.title;
-
-    body.appendChild(title);
-
-    const excerpt = document.createElement("p");
-    excerpt.className = "news-card__excerpt";
-    excerpt.textContent = post.excerpt || "";
-
-    body.appendChild(excerpt);
-
-    const meta = document.createElement("p");
-    meta.className = "news-card__meta";
-
-    const author = post.author || "";
-    
-    const date = post.publishedAt
-        ? new Date(post.publishedAt).toLocaleDateString("es-AR")
-        : "";
-    meta.textContent=[author,date].filter(Boolean).join(" · ");
-
-    body.appendChild(meta);
-    link.appendChild(body);
-    card.appendChild(link);
-    return card;
+    const wrapper = document.createElement("p");
+    wrapper.className = "category-load-more";
+    wrapper.appendChild(button);
+    container.after(wrapper);
+    return { button, wrapper };
 }
-async function renderCategory(){
-    const slug=getCategorySlug();
+
+async function renderCategory() {
+    const slug = getCategorySlug();
     const titleElement = document.querySelector("#categoryTitle");
     const newsContainer = document.querySelector("#categoryNews");
-    if (!slug || !newsContainer){
+    if (!slug || !newsContainer) {
         return;
     }
-    try {
-        const category=await fetchJSON(`/categories/${encodeURIComponent(slug)}`);
-        const posts = await fetchJSON(`/categories/${encodeURIComponent(slug)}/posts`);
 
-        if (category && titleElement){
-            titleElement.textContent=category.name;
+    try {
+        const category = await fetchJSON(`/categories/${encodeURIComponent(slug)}`);
+        if (category && titleElement) {
+            titleElement.textContent = category.name;
             document.title = `${category.name} - BALONALAIRE`;
         }
 
         // Clear loading message
         newsContainer.innerHTML = "";
 
-        if (posts.length === 0) {
-            newsContainer.innerHTML = "<p>No hay noticias en esta categoría aún.</p>";
-            return;
-        }
+        let page = 0;
+        let loadMore = null;
 
-        posts.forEach((post)=> {
-            newsContainer.appendChild(createCategoryCard(post));
-        });
+        // Las noticias se piden de a páginas: la categoría puede crecer sin que la carga se encarezca
+        const loadPage = async () => {
+            const data = await fetchJSON(
+                `/categories/${encodeURIComponent(slug)}/posts?page=${page}&size=${CATEGORY_PAGE_SIZE}`
+            );
+
+            if (page === 0 && data.content.length === 0) {
+                newsContainer.innerHTML = "<p>No hay noticias en esta categoría aún.</p>";
+                return;
+            }
+
+            data.content.forEach((post) => {
+                newsContainer.appendChild(createNewsCard(post, {
+                    parts: ["category", "title", "excerpt", "meta"],
+                    headingTag: "h2"
+                }));
+            });
+            page += 1;
+
+            if (data.last) {
+                loadMore?.wrapper.remove();
+            } else if (!loadMore) {
+                loadMore = createLoadMoreButton(newsContainer, () => {
+                    loadMore.button.disabled = true;
+                    loadPage()
+                        .catch((error) => console.error("No se pudieron cargar más noticias", error))
+                        .finally(() => { loadMore.button.disabled = false; });
+                });
+            }
+        };
+
+        await loadPage();
     } catch (error) {
         console.error("No se pudo cargar la categoría", error);
         newsContainer.innerHTML = "<p>No se pudo cargar las noticias. Intentá más tarde.</p>";
     }
 }
+
 document.addEventListener("DOMContentLoaded", () => {
     renderCategory().catch((error) => {
-        console.error(
-            "No se pudo cargar la categoría",
-            error
-        );
+        console.error("No se pudo cargar la categoría", error);
     });
 });

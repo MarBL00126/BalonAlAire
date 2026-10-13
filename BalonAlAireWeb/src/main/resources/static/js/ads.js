@@ -5,11 +5,11 @@ async function renderAds() {
     }
 
     const data = await fetchJSON("/advertisements");
-    const ads = data.content ?? data;   // soporta Page<> y array plano
+    const ads = data;
     slots.forEach((slot) => {
         const position = slot.getAttribute("data-ad-slot");
         const candidates = ads
-            .filter((item) => item.active && item.position === position)
+            .filter((item) => item.position === position && isHttpUrl(item.linkUrl))
             .sort((a, b) => (b.id || 0) - (a.id || 0));
 
         renderAdCandidates(slot, candidates);
@@ -41,6 +41,16 @@ function renderAdCandidates(slot, candidates) {
 
         image.src = ad.imageUrl;
     });
+}
+
+// El enlace se abre en el navegador del lector: solo se aceptan http(s)
+function isHttpUrl(value) {
+    try {
+        const protocol = new URL(value).protocol;
+        return protocol === "http:" || protocol === "https:";
+    } catch {
+        return false;
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {

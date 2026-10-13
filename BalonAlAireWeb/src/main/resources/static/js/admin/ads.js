@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function loadAdvertisements() {
     try {
-        const page = await apiGet("/advertisements");
+        const page = await apiGet("/admin/advertisements");
         advertisements = page.content;
         renderAdvertisements(advertisements);
     } catch (error) {
@@ -201,30 +201,8 @@ async function uploadImage(file) {
         return currentImageUrl; // Sin archivo nuevo → conservar la URL actual
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("/api/uploads", { method: "POST", body: formData });
-
-    if (response.status === 401 || response.status === 403) {
-        window.location.href = "/admin/login";
-        return null;
-    }
-
-    if (!response.ok) {
-        let message = `Error subiendo imagen (${response.status})`;
-        try {
-            const errorData = await response.json();
-            message = errorData.message || errorData.error || message;
-        } catch { /* respuesta no-JSON */ }
-        throw new Error(message);
-    }
-
-    const data = await response.json();
-    if (!data.url) throw new Error("El servidor no devolvió la URL de la imagen.");
-    return data.url;
+    return uploadFile(file);
 }
-
 
 /* =============================================================
  * GUARDAR ANUNCIO (crear o actualizar)
@@ -250,10 +228,10 @@ async function saveAdvertisement(event) {
         validateAdvertisement(advertisement);
 
         if (id) {
-            await apiPut(`/advertisements/${id}`, advertisement);
+            await apiPut(`/admin/advertisements/${id}`, advertisement);
             showMessage(elementId, "Anuncio actualizado correctamente.", "success");
         } else {
-            await apiPost("/advertisements", advertisement);
+            await apiPost("/admin/advertisements", advertisement);
             showMessage(elementId, "Anuncio creado correctamente.", "success");
         }
 
@@ -319,7 +297,7 @@ async function deleteAdvertisement(id) {
     if (!confirm("¿Seguro que querés eliminar este anuncio?")) return;
 
     try {
-        await apiDelete(`/advertisements/${id}`);
+        await apiDelete(`/admin/advertisements/${id}`);
         showMessage(elementId, "Anuncio eliminado correctamente.", "success");
         await loadAdvertisements();
     } catch (error) {

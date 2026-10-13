@@ -1,76 +1,95 @@
 /* ============================================================
-   post-detail.css — Mobile-first. Artículo individual
-   responsive con clamp(), aspect-ratio en imagen.
+   post-detail.css — Artículo individual inspirado en CoverNews
    ============================================================ */
 
-/* ── Wrapper del artículo ── */
-.post-detail {
-  min-width: 0; /* evita overflow en grid/flex */
+.single-post-page {
+  background: var(--background);
 }
 
-/* ── Badge de categoría ── */
+.single-post-page .content-layout {
+  gap: 30px;
+  padding: 24px 0 42px;
+}
+
+.single-post-page .ad-slot--banner {
+  margin-top: 22px;
+}
+
+.post-detail {
+  min-width: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 18px;
+}
+
 .post-detail__category {
-  display: inline-block;
-  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--primary);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .post-detail__category a {
-  color: inherit;
+  display: inline-block;
+  color: #fff;
+  background: var(--primary);
+  padding: 5px 9px;
+  text-decoration: none;
+  line-height: 1;
 }
 
 .post-detail__category a:hover {
-  text-decoration: underline;
+  color: #fff;
+  background: var(--primary-dark);
 }
 
-/* ── Título del artículo ── */
 .post-detail h1 {
   font-family: var(--font-heading);
-  font-size: clamp(1.35rem, 4vw, 2rem);
-  line-height: 1.2;
-  margin-bottom: 10px;
-  color: var(--heading);
+  font-size: clamp(2rem, 4.5vw, 3.125rem);
+  line-height: 1.08;
+  margin: 0 0 14px;
+  color: #000;
+  letter-spacing: 0;
 }
 
-/* ── Metadata (autor · fecha) ── */
 .post-detail__meta {
   font-family: var(--font-heading);
-  color: var(--text-muted);
-  font-size: 13px;
-  margin-bottom: 18px;
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 26px;
 }
 
-/* ── Imagen destacada: aspect-ratio fijo, nunca se deforma ── */
 .post-detail__image {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: var(--radius-lg);
-  margin-bottom: 20px;
   display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 0 0 28px;
+  border-radius: 0;
+  object-fit: contain;
 }
 
-/* ── Cuerpo del artículo ── */
 .post-detail__content {
+  font-family: var(--font-body);
   line-height: 1.75;
-  font-size: clamp(15px, 2vw, 17px);
-  color: var(--text);
-  white-space: pre-line;
+  font-size: 16px;
+  color: #3a3a3a;
 }
 
 .post-detail__content p {
-  margin-bottom: 1.1em;
+  margin: 0 0 1.25em;
 }
 
 .post-detail__content h2,
 .post-detail__content h3 {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+  font-family: var(--font-heading);
+  margin: 1.5em 0 0.55em;
+  color: #000;
 }
 
 .post-detail__content img {
@@ -81,8 +100,13 @@
 }
 
 .post-detail__content a {
+  color: #404040;
+  text-decoration: none;
+}
+
+.post-detail__content a:hover,
+.post-detail__content a:focus {
   color: var(--primary);
-  text-decoration: underline;
 }
 
 .post-detail__content blockquote {
@@ -93,7 +117,20 @@
   font-style: italic;
 }
 
-/* ── Título de sección "Noticias relacionadas" ── */
+.post-detail > p:last-child .btn,
+.post-detail .btn--primary {
+  border-radius: 0;
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 20px;
+}
+
+.post-detail > p:last-child .btn:hover,
+.post-detail .btn--primary:hover {
+  background: var(--primary-dark);
+  color: #fff;
+}
+
 .related-title {
   font-family: var(--font-heading);
   font-size: clamp(15px, 2.5vw, 18px);
@@ -104,22 +141,29 @@
   color: var(--heading);
 }
 
-/* ── Grilla de noticias relacionadas ── */
 #relatedNews {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
   gap: var(--gap);
 }
 
-/* ════════════════════════════════
-   TABLET ≥768px
-   ════════════════════════════════ */
 @media (min-width: 768px) {
+  .post-detail {
+    padding: 26px;
+  }
+
   .post-detail__image {
     margin-bottom: 28px;
   }
 
   .post-detail__meta {
     margin-bottom: 22px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .single-post-page .content-layout {
+    grid-template-columns: minmax(0, 2fr) 360px;
+    align-items: start;
   }
 }

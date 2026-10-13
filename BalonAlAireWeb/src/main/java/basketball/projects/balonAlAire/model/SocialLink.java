@@ -6,18 +6,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "social_links")
-@Data
+@Getter
+@Setter
 public class SocialLink {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @NotBlank
     @Column(nullable = false)
     private String platform;
 
@@ -25,4 +25,14 @@ public class SocialLink {
     private String linkUrl;
 
     private boolean active = true;
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof SocialLink that && id != null && id.equals(that.getId()));
+    }
+
+    @Override
+    public int hashCode() {
+        return SocialLink.class.hashCode();
+    }
 }

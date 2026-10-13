@@ -10,7 +10,7 @@ async function renderCategories() {
         return;
     }
 
-    const categories = await fetchJSON("/categories");
+    const categories = await fetchJSONCached("/categories");
     categories.forEach((category) => {
         const item = document.createElement("li");
         const link = document.createElement("a");
@@ -27,8 +27,8 @@ async function renderLatestNews() {
         return;
     }
 
-    const data = await fetchJSON("/posts");
-    const posts = data.content ?? data;   // soporta Page<> y array plano
+    const data = await fetchJSONCached("/posts");
+    const posts = data.content;
     const latest = posts.slice(0, 5);
 
     lists.forEach((list) => {
@@ -49,11 +49,11 @@ async function renderSocialLinks() {
         return;
     }
 
-    const socialLinks = await fetchJSON("/social-links");
+    const socialLinks = await fetchJSONCached("/social-links");
     const activeLinks = socialLinks.filter((social) => social.active);
 
     lists.forEach((list) => {
-        activeLinks.forEach((social) => {
+        socialLinks.forEach((social) => {
             const link = document.createElement("a");
             link.href = social.linkUrl;
             link.target = "_blank";

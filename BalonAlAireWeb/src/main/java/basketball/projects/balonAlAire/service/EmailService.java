@@ -12,6 +12,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import basketball.projects.balonAlAire.config.AppProperties;
 import basketball.projects.balonAlAire.model.User;
 
 @Service
@@ -26,12 +27,11 @@ public class EmailService {
 
     public EmailService(
             ObjectProvider<JavaMailSender> mailSenderProvider,
-            @Value("${app.public-url:http://localhost:8080}") String publicUrl,
-            @Value("${app.mail.from:}") String from,
+            AppProperties properties,
             @Value("${spring.mail.host:}") String mailHost) {
         this.mailSenderProvider = mailSenderProvider;
-        this.publicUrl = publicUrl;
-        this.from = from;
+        this.publicUrl = properties.publicUrl();
+        this.from = properties.mail().from();
         this.mailHost = mailHost;
     }
 

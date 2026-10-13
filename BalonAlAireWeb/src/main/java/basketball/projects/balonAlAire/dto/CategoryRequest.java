@@ -1,12 +1,16 @@
 package basketball.projects.balonAlAire.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-@Data 
-public class CategoryRequest {
-    @NotBlank(message = "Name is required")
-        String name;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
-        @NotBlank(message = "Slug is required")
-        String slug;
+public record CategoryRequest(
+        @NotBlank(message = "El nombre es obligatorio")
+        @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
+        String name,
+
+        @NotBlank(message = "El slug es obligatorio")
+        @Size(max = 100, message = "El slug no puede superar los 100 caracteres")
+        @Pattern(regexp = Slugs.PATTERN, message = Slugs.MESSAGE)
+        String slug) {
 }

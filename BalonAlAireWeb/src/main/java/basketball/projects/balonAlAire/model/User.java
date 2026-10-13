@@ -2,38 +2,35 @@ package basketball.projects.balonAlAire.model;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @NotBlank
     @Column(nullable = false)
     private String username;
 
-    // never serialize the password hash in a JSON response
-    @JsonIgnore
-    @NotBlank
     @Column(nullable = false)
     private String password;
 
-    @NotBlank
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;
+    private Role role;
 
     @Column
     private String email;
@@ -41,10 +38,20 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @JsonIgnore
+    // Hash SHA-256 del token enviado por email, nunca el token en claro
     @Column(name = "password_reset_token")
     private String passwordResetToken;
 
     @Column(name = "password_reset_expires_at")
     private LocalDateTime passwordResetExpiresAt;
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof User that && id != null && id.equals(that.getId()));
+    }
+
+    @Override
+    public int hashCode() {
+        return User.class.hashCode();
+    }
 }

@@ -8,6 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
         message.className = "admin-message error";
     }
 
+    if (params.get("locked") === "true") {
+        message.textContent = "Demasiados intentos fallidos. Esperá unos minutos antes de volver a intentar.";
+        message.className = "admin-message error";
+    }
+
     if (params.get("logout") === "true") {
         message.textContent = "Sesión cerrada correctamente.";
         message.className = "admin-message success";

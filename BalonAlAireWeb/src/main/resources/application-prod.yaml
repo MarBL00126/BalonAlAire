@@ -1,0 +1,12 @@
+# Producción: SPRING_PROFILES_ACTIVE=prod
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true
+
+# Logs en JSON (una línea por evento) para que la plataforma los indexe
+logging:
+  structured:
+    format:
+      console: logstash

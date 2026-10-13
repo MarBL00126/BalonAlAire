@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function loadCategories() {
     try {
-        categories = await apiGet("/categories");
+        categories = await apiGet("/admin/categories");
 
         renderCategories(categories);
 
@@ -133,14 +133,14 @@ async function saveCategory(event) {
 
     try {
         if (id) {
-            await apiPut(`/categories/${id}`, category);
+            await apiPut(`/admin/categories/${id}`, category);
 
             showMessage(elementId,
                 "Categoría actualizada correctamente.",
                 "success"
             );
         } else {
-            await apiPost("/categories", category);
+            await apiPost("/admin/categories", category);
 
             showMessage(elementId,
                 "Categoría creada correctamente.",
@@ -181,7 +181,7 @@ async function deleteCategory(id) {
     }
 
     try {
-        await apiDelete(`/categories/${id}`);
+        await apiDelete(`/admin/categories/${id}`);
 
         showMessage(elementId,
             "Categoría eliminada correctamente.",

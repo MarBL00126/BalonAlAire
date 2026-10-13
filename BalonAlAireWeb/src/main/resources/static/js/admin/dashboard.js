@@ -1,28 +1,23 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const postsCount = document.getElementById("posts-count");
-    const categoriesCount = document.getElementById("categories-count");
-    const adsCount = document.getElementById("ads-count");
+    // Cada contador se carga por separado: un editor no tiene acceso a publicidad y no debe romper el resto
+    const counters = [
+        { id: "posts-count", path: "/admin/posts?size=1" },
+        { id: "categories-count", path: "/admin/categories" },
+        { id: "ads-count", path: "/admin/advertisements?size=1" }
+    ];
 
-    try {
-        const [posts, categories, ads] = await Promise.all([
-            apiGet("/posts"),
-            apiGet("/categories"),
-            apiGet("/advertisements")
-        ]);
-
-        if (postsCount) {
-            postsCount.textContent = posts.length;
+    await Promise.all(counters.map(async ({ id, path }) => {
+        const element = document.getElementById(id);
+        if (!element) {
+            return;
         }
 
-        if (categoriesCount) {
-            categoriesCount.textContent = categories.length;
+        try {
+            const data = await apiGet(path);
+            element.textContent = data.totalElements ?? data.length;
+        } catch (error) {
+            element.textContent = "-";
+            console.warn(`No se pudo cargar ${path}`, error);
         }
-
-        if (adsCount) {
-            adsCount.textContent = ads.length;
-        }
-
-    } catch (error) {
-        console.error("Error cargando dashboard:", error);
-    }
+    }));
 });

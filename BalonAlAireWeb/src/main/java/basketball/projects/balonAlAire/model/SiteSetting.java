@@ -8,25 +8,37 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "site_settings")
-@Data
+@Getter
+@Setter
 public class SiteSetting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @NotBlank
     @Column(name = "settings_key", nullable = false)
     private String settingsKey;
 
     @Column(name = "settings_value")
     private String settingsValue;
-    @Column(name="created_at")
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Column(name="updated_at")
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (other instanceof SiteSetting that && id != null && id.equals(that.getId()));
+    }
+
+    @Override
+    public int hashCode() {
+        return SiteSetting.class.hashCode();
+    }
 }

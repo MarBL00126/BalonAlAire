@@ -7,9 +7,11 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import basketball.projects.balonAlAire.dto.CategoryRequest;
+import basketball.projects.balonAlAire.dto.CategoryResponse;
 import basketball.projects.balonAlAire.model.Category;
 import basketball.projects.balonAlAire.repository.CategoryRepository;
 
@@ -22,41 +24,45 @@ public class CategoryService {
     }
 
     @Cacheable("categories")
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> findAll() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(CategoryResponse::from)
+                .toList();
     }
 
-    public Category findById(Integer id) {
-        return categoryRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
-    }
-
-    public Category findBySlug(String slug) {
+    public CategoryResponse findBySlug(String slug) {
         return categoryRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+                .map(CategoryResponse::from)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada"));
     }
 
     @CacheEvict(value = "categories", allEntries = true)
-    public Category save(CategoryRequest request) {
+    public CategoryResponse save(CategoryRequest request) {
+        LocalDateTime now = LocalDateTime.now();
         Category category = new Category();
-        category.setName(request.getName());
-        category.setSlug(request.getSlug());
-        return categoryRepository.save(category);
+        category.setName(request.name());
+        category.setSlug(request.slug());
+        category.setCreatedAt(now);
+        category.setUpdatedAt(now);
+        return CategoryResponse.from(categoryRepository.save(category));
     }
 
     @CacheEvict(value = "categories", allEntries = true)
-    public Category update(Integer id, CategoryRequest request) {
-        Category existing = findById(id);
-        existing.setName(request.getName());
-        existing.setSlug(request.getSlug());
+    public CategoryResponse update(Long id, CategoryRequest request) {
+        Category existing = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada"));
+        existing.setName(request.name());
+        existing.setSlug(request.slug());
         existing.setUpdatedAt(LocalDateTime.now());
-        return categoryRepository.save(existing);
+        return CategoryResponse.from(categoryRepository.save(existing));
     }
 
+    @Transactional
     @CacheEvict(value = "categories", allEntries = true)
-    public void delete(Integer id) {
-        categoryRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
-        categoryRepository.deleteById(id);
+    public void delete(Long id) {
+        if (categoryRepository.deleteOneById(id) == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada");
+        }
     }
-}
+}
