@@ -131,6 +131,20 @@ class SecurityRulesIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void publicSessionIsEmptyForAnonymousUsers() throws Exception {
+        mockMvc.perform(get("/api/public/session")).andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(username = "maria", roles = "EDITOR")
+    void publicSessionRevealsOnlyTheCallersOwnIdentity() throws Exception {
+        mockMvc.perform(get("/api/public/session"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("maria"))
+                .andExpect(jsonPath("$.role").value("EDITOR"));
+    }
+
+    @Test
     void healthEndpointIsPublic() throws Exception {
         mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
     }
@@ -204,6 +218,19 @@ class SecurityRulesIntegrationTest extends AbstractIntegrationTest {
     void adminApiRequiresAuthentication() throws Exception {
         mockMvc.perform(get("/api/admin/posts")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/admin/advertisements")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "EDITOR")
+    void loginPageSendsLoggedInUsersToThePanel() throws Exception {
+        mockMvc.perform(get("/admin/login"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin"));
+    }
+
+    @Test
+    void loginPageIsShownToAnonymousUsers() throws Exception {
+        mockMvc.perform(get("/admin/login")).andExpect(status().isOk());
     }
 
     @Test

@@ -128,6 +128,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   padding: 6px 14px;
   min-height: 36px;
   font-family: var(--font-heading);
@@ -142,6 +146,11 @@
   text-decoration: none;
   transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
   white-space: nowrap;
+}
+
+/* Con sesión iniciada el botón muestra el nombre del usuario tal como está escrito */
+.btn-admin--user {
+  text-transform: none;
 }
 
 .btn-admin:visited {

@@ -1,5 +1,7 @@
 package basketball.projects.balonAlAire.controller;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +14,13 @@ public class AdminPageController {
         return "forward:/admin/dashboard.html";
     }
 
+    // Con sesión activa no tiene sentido mostrar el formulario: va directo al panel
     @GetMapping("/login")
-    public String login() {
-        return "forward:/admin/login.html";
+    public String login(Authentication authentication) {
+        boolean loggedIn = authentication != null
+                && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken);
+        return loggedIn ? "redirect:/admin" : "forward:/admin/login.html";
     }
 
     @GetMapping("/noticias")
