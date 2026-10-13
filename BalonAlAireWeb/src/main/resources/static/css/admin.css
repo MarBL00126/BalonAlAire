@@ -12,6 +12,12 @@
     padding: 0;
 }
 
+/* Reserva el espacio de la barra de scroll: evita que aparezca y desaparezca en bucle
+   cuando el alto de la página queda justo en el límite (el editor cambia de alto al cargar) */
+html {
+    scrollbar-gutter: stable;
+}
+
 body {
     font-family: var(--font-body);
     background: var(--background);
